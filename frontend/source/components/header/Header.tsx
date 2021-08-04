@@ -39,12 +39,16 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
     "&.active": {
       color: "red",
+      pointerEvents: "none",
     },
   },
   link: {
     color: "white",
     textDecoration: "none",
     flexGrow: 1,
+    "&.active": {
+      pointerEvents: "none",
+    },
   },
 }));
 
