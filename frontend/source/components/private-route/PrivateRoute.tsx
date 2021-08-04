@@ -2,33 +2,19 @@ import React from "react";
 import { Redirect, Route, RouteProps } from "react-router";
 import { SIGN_IN } from "constants/routes";
 
-export type PrivateRouteProps = {
-  isAuthenticated: boolean;
-  authenticationPath: string;
-} & RouteProps;
+import { useSelector } from "react-redux";
+import { IAppStore } from "store";
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({
-  isAuthenticated,
-  authenticationPath,
-  ...routeProps
-}: PrivateRouteProps) => {
-  console.log("Private route");
-  if (isAuthenticated) {
+const PrivateRoute: React.FC<RouteProps> = ({ ...routeProps }: RouteProps) => {
+  const isAuthorized = useSelector(
+    (state: IAppStore) => state.user.isAuthorized
+  );
+
+  if (isAuthorized) {
     return <Route {...routeProps} />;
   } else {
-    return <Redirect to={{ pathname: authenticationPath }} />;
+    return <Redirect to={{ pathname: SIGN_IN }} />;
   }
 };
 
-const HOC: React.FC<RouteProps> = (props: RouteProps) => {
-  const isAuthenticated = false;
-  return (
-    <PrivateRoute
-      {...props}
-      isAuthenticated={isAuthenticated}
-      authenticationPath={SIGN_IN}
-    ></PrivateRoute>
-  );
-};
-
-export { HOC as PrivateRoute };
+export { PrivateRoute };

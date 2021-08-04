@@ -4,7 +4,8 @@ import { makeStyles } from "@material-ui/styles";
 import { TextField } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
-
+import { actionSignIn } from "store/user/actions";
+import { useDispatch } from "react-redux";
 const useStyles = makeStyles(() => ({
   paper: {
     display: "flex",
@@ -29,7 +30,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 const SignIn: React.FC = () => {
+  const dispatch = useDispatch();
   const classes = useStyles();
+
+  const onLoginBtnClick = () => {
+    dispatch(actionSignIn());
+  };
+
   return (
     <Modal
       open={true}
@@ -42,7 +49,7 @@ const SignIn: React.FC = () => {
         </Typography>
         <TextField className={classes.textField} placeholder="Login" />
         <TextField className={classes.textField} placeholder="Password" />
-        <Button variant="contained" color="secondary">
+        <Button variant="contained" color="secondary" onClick={onLoginBtnClick}>
           Login
         </Button>
       </div>

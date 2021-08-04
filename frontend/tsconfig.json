@@ -11,6 +11,8 @@
         "components/*": ["./source/components/*"],
         "views/*": ["./source/views/*"],
         "constants/*": ["./source/constants/*"],
+        "store": ["./source/store"],
+        "store/*": ["./source/store/*"],
       }
   },
   "exclude": [
