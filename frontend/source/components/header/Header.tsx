@@ -8,6 +8,9 @@ import { IconButton } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+
+import { MY_PROFILE, MESSAGES } from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,6 +34,18 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "356px",
     width: "100%",
   },
+  navLink: {
+    color: "black",
+    textDecoration: "none",
+    "&.active": {
+      color: "red",
+    },
+  },
+  link: {
+    color: "white",
+    textDecoration: "none",
+    flexGrow: 1,
+  },
 }));
 
 const StyledMenu = withStyles({
@@ -39,6 +54,8 @@ const StyledMenu = withStyles({
     width: "100%",
   },
 })(Menu);
+
+/* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
 
 const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -65,7 +82,11 @@ const Header: React.FC = () => {
           <MenuIcon />
         </IconButton>
 
-        <div className={classes.space} />
+        <Typography variant="h6" className={classes.space} title={userLogin}>
+          <Link className={classes.link} to="/">
+            Chat
+          </Link>
+        </Typography>
 
         <StyledMenu
           className={classes.menu}
@@ -75,13 +96,23 @@ const Header: React.FC = () => {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>Messages</MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
+          <MenuItem onClick={handleClose}>
+            <NavLink className={classes.navLink} to={MESSAGES}>
+              Messages
+            </NavLink>
+          </MenuItem>
+
+          <MenuItem onClick={handleClose}>
+            <NavLink className={classes.navLink} to={"/logout"}>
+              Logout
+            </NavLink>
+          </MenuItem>
         </StyledMenu>
 
         <Typography variant="h6" className={classes.login} title={userLogin}>
-          {userLogin}
+          <NavLink className={classes.link} to={MY_PROFILE} exact>
+            {userLogin}
+          </NavLink>
         </Typography>
       </Toolbar>
     </AppBar>

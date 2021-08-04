@@ -1,6 +1,13 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { Header } from "components/header";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+
+import { Messages } from "views/messages";
+import { MyProfile } from "views/my-profile";
+import { RootView } from "views/root-view";
+
+import { MESSAGES, MY_PROFILE } from "constants/routes";
 
 const useStyles = makeStyles({
   app: {
@@ -12,9 +19,17 @@ const useStyles = makeStyles({
 const App: React.FC = () => {
   const classes = useStyles();
   return (
-    <div className={classes.app}>
-      <Header />
-    </div>
+    <BrowserRouter>
+      <div className={classes.app}>
+        <Header />
+
+        <Switch>
+          <Route path={MY_PROFILE} component={MyProfile} />
+          <Route path={MESSAGES} component={Messages} />
+          <Route path="/" component={RootView} />
+        </Switch>
+      </div>
+    </BrowserRouter>
   );
 };
 

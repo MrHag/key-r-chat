@@ -9,6 +9,8 @@
       "allowSyntheticDefaultImports": true,
       "paths": {
         "components/*": ["./source/components/*"],
+        "views/*": ["./source/views/*"],
+        "constants/*": ["./source/constants/*"],
       }
   },
   "exclude": [

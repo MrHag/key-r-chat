@@ -89,6 +89,8 @@ module.exports = function moduleGenerator(mode) {
       extensions: ['.ts', '.tsx', '.json', '.js'],
       alias: {
         'components': path.resolve(__dirname, '../source/components'),
+        'views': path.resolve(__dirname, '../source/views'),
+        'constants': path.resolve(__dirname, '../source/constants'),
       }
     },
 
