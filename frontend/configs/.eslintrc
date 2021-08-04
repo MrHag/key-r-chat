@@ -1,0 +1,44 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:react/recommended",
+    "prettier",
+    "plugin:prettier/recommended"
+  ],
+
+  "settings": {
+    "react": {
+      "createClass": "createReactClass",
+      "pragma": "React",
+      "fragment": "Fragment",
+      "version": "detect",
+      "flowVersion": "detect"
+    }
+  },
+
+  "rules": {
+    "react/jsx-props-no-spreading": "off",
+    "@typescript-eslint/no-var-requires": 0,
+    "no-console": "off",
+    "linebreak-style": 0,
+    "no-unused-vars": [
+      "warn"
+    ],
+    "object-curly-newline": ["error", {
+      "ImportDeclaration": "never"
+    }],
+    "quote-props": "off",
+    "no-plusplus": "off"
+  },
+
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}
