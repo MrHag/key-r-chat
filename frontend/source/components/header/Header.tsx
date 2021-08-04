@@ -61,7 +61,11 @@ const StyledMenu = withStyles({
 
 /* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
 
-const Header: React.FC = () => {
+import { PropsFromConnector } from ".";
+
+const Header: React.FC<PropsFromConnector> = ({
+  actionSignOut,
+}: PropsFromConnector) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const userLogin = "User login(name)";
 
@@ -71,6 +75,10 @@ const Header: React.FC = () => {
 
   const handleOnMenuClick = (e: React.MouseEvent) => {
     setAnchorEl(e.currentTarget);
+  };
+
+  const onLogoutClick = () => {
+    actionSignOut();
   };
 
   const classes = useStyles();
@@ -107,9 +115,9 @@ const Header: React.FC = () => {
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
-            <NavLink className={classes.navLink} to={"/logout"}>
+            <a className={classes.navLink} onClick={onLogoutClick}>
               Logout
-            </NavLink>
+            </a>
           </MenuItem>
         </StyledMenu>
 

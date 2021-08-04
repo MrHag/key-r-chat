@@ -4,8 +4,10 @@ import { makeStyles } from "@material-ui/styles";
 import { TextField } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
-import { actionSignIn } from "store/user/actions";
-import { useDispatch } from "react-redux";
+import { Redirect } from "react-router";
+
+import { PropsFromConnector } from ".";
+
 const useStyles = makeStyles(() => ({
   paper: {
     display: "flex",
@@ -29,13 +31,19 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SignIn: React.FC = () => {
-  const dispatch = useDispatch();
+const SignIn: React.FC<PropsFromConnector> = ({
+  isAuthorized,
+  actionSignIn,
+}: PropsFromConnector) => {
   const classes = useStyles();
 
   const onLoginBtnClick = () => {
-    dispatch(actionSignIn());
+    actionSignIn();
   };
+
+  if (isAuthorized) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Modal
