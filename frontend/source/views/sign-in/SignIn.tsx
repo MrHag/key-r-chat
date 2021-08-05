@@ -7,12 +7,10 @@ import { Typography } from "@material-ui/core";
 import { Redirect } from "react-router";
 
 import { PropsFromConnector } from ".";
+import { Form, Formik } from "formik";
 
 const useStyles = makeStyles(() => ({
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -29,7 +27,17 @@ const useStyles = makeStyles(() => ({
   textField: {
     marginBottom: "32px",
   },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
 }));
+
+interface IFormikValues {
+  login: string;
+  password: string;
+}
 
 const SignIn: React.FC<PropsFromConnector> = ({
   isAuthorized,
@@ -37,8 +45,15 @@ const SignIn: React.FC<PropsFromConnector> = ({
 }: PropsFromConnector) => {
   const classes = useStyles();
 
-  const onLoginBtnClick = () => {
-    actionSignIn();
+  const formikValidation = (values: IFormikValues) => {
+    const errors: { login?: string; password?: string } = {};
+    if (values.login === "") {
+      errors.login = "Login must not be empty!";
+    }
+    if (values.password === "") {
+      errors.password = "Password must not be empty!";
+    }
+    return errors;
   };
 
   if (isAuthorized) {
@@ -52,14 +67,54 @@ const SignIn: React.FC<PropsFromConnector> = ({
       aria-describedby="simple-modal-description"
     >
       <div className={classes.paper}>
-        <Typography variant="h6" className={classes.title}>
-          Sign in
-        </Typography>
-        <TextField className={classes.textField} placeholder="Login" />
-        <TextField className={classes.textField} placeholder="Password" />
-        <Button variant="contained" color="secondary" onClick={onLoginBtnClick}>
-          Login
-        </Button>
+        <Formik
+          initialValues={{
+            login: "",
+            password: "",
+          }}
+          validate={formikValidation}
+          onSubmit={(values) =>
+            // values: IFormikValues
+            // { setSubmitting }: FormikHelpers<IFormikValues>
+            {
+              actionSignIn(values.login, values.password);
+            }
+          }
+        >
+          {(formik) => (
+            <Form className={classes.form}>
+              <Typography variant="h6" className={classes.title}>
+                Sign in
+              </Typography>
+              <TextField
+                autoFocus={true}
+                className={classes.textField}
+                autoComplete="off"
+                id="login"
+                name="login"
+                label="Login"
+                value={formik.values.login}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.login)}
+                helperText={formik.errors.login}
+              />
+              <TextField
+                className={classes.textField}
+                autoComplete="off"
+                id="password"
+                name="password"
+                label="Password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.password)}
+                helperText={formik.errors.password}
+              />
+              <Button variant="contained" color="secondary" type="submit">
+                Login
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </div>
     </Modal>
   );
