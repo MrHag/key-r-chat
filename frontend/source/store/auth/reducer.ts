@@ -5,10 +5,10 @@ export interface IAuthStore {
 }
 
 const UserDefaultState: IAuthStore = {
-  isAuthorized: false,
+  isAuthorized: true,
 };
 
-function reducer(state = UserDefaultState, action: ActionType): IAuthStore {
+const reducer = (state = UserDefaultState, action: ActionType): IAuthStore => {
   switch (action.type) {
     case SIGN_IN: {
       return {
@@ -25,6 +25,6 @@ function reducer(state = UserDefaultState, action: ActionType): IAuthStore {
     default:
       return state;
   }
-}
+};
 
 export { reducer };

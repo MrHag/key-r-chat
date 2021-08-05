@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar } from "@material-ui/core";
+import { AppBar, useTheme } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import { Toolbar } from "@material-ui/core";
@@ -10,7 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
-import { MY_PROFILE, MESSAGES } from "constants/routes";
+import { MY_PROFILE, MESSAGES, SETTINGS } from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,6 +69,9 @@ const Header: React.FC<PropsFromConnector> = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const userLogin = "User login(name)";
 
+  const theme = useTheme();
+  console.log("theme = ", theme);
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -111,6 +114,12 @@ const Header: React.FC<PropsFromConnector> = ({
           <MenuItem onClick={handleClose}>
             <NavLink className={classes.navLink} to={MESSAGES}>
               Messages
+            </NavLink>
+          </MenuItem>
+
+          <MenuItem onClick={handleClose}>
+            <NavLink className={classes.navLink} to={SETTINGS}>
+              Settings
             </NavLink>
           </MenuItem>
 
