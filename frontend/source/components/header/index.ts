@@ -1,5 +1,5 @@
 import { connect, ConnectedProps } from "react-redux";
-import { actionSignOut } from "store/user/actions";
+import { actionSignOut } from "store/auth/actions";
 import { Header } from "./Header";
 
 const mapDispatch = {

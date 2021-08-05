@@ -1,10 +1,10 @@
 import { connect, ConnectedProps } from "react-redux";
-import { actionSignIn } from "store/user/actions";
+import { actionSignIn } from "store/auth/actions";
 import { SignIn } from "./SignIn";
 import { IAppStore } from "store";
 
 const mapState = (state: IAppStore) => ({
-  isAuthorized: state.user.isAuthorized,
+  isAuthorized: state.auth.isAuthorized,
 });
 
 const mapDispatch = {

@@ -1,12 +1,12 @@
 import { Action, ActionCreator, AnyAction, Dispatch } from "redux";
 import { ActionType, signIn, signOut } from "./action-creators";
 import { ThunkAction } from "redux-thunk";
-import { IUserStore } from "./reducer";
+import { IAuthStore } from "./reducer";
 
 // TODO: Warning! I sort of don't understand how this code works...
 
 const actionSignIn: ActionCreator<
-  ThunkAction<Promise<Action>, IUserStore, unknown, AnyAction>
+  ThunkAction<Promise<Action>, IAuthStore, unknown, AnyAction>
 > = () => async (dispatch: Dispatch<ActionType>) => {
   return new Promise(() => {
     setTimeout(() => {

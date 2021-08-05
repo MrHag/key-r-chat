@@ -1,15 +1,15 @@
 import React from "react";
 import { Redirect, Route, RouteProps } from "react-router";
 import { SIGN_IN } from "constants/routes";
+import { PropsFromConnector } from ".";
 
-import { useSelector } from "react-redux";
-import { IAppStore } from "store";
+type IProps = PropsFromConnector & RouteProps;
 
-const PrivateRoute: React.FC<RouteProps> = ({ ...routeProps }: RouteProps) => {
-  const isAuthorized = useSelector(
-    (state: IAppStore) => state.user.isAuthorized
-  );
-
+const PrivateRoute: React.FC<RouteProps> = ({
+  isAuthorized,
+  ...routeProps
+}: IProps) => {
+  console.log("isAuth = ", isAuthorized);
   if (isAuthorized) {
     return <Route {...routeProps} />;
   } else {

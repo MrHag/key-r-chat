@@ -1,14 +1,14 @@
 import { ActionType, SIGN_IN, SIGN_OUT } from "./action-creators";
 
-export interface IUserStore {
+export interface IAuthStore {
   isAuthorized: boolean;
 }
 
-const UserDefaultState: IUserStore = {
+const UserDefaultState: IAuthStore = {
   isAuthorized: false,
 };
 
-function reducer(state = UserDefaultState, action: ActionType): IUserStore {
+function reducer(state = UserDefaultState, action: ActionType): IAuthStore {
   switch (action.type) {
     case SIGN_IN: {
       return {

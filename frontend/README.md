@@ -6,3 +6,4 @@ Maybe remove SCSS at all
 1. cd frontend
 2. yarn install
 3. yarn run start
+4. localhost:3000

@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import { IUserStore, reducer as userReducer } from "./user/reducer";
+import { IAuthStore, reducer as authReducer } from "./auth/reducer";
 
 export interface IAppStore {
-  user: IUserStore;
+  auth: IAuthStore;
 }
 
 export const rootReducer = combineReducers({
-  user: userReducer,
+  auth: authReducer,
 });
