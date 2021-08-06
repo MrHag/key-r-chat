@@ -6,4 +6,6 @@ const themes = new Map([
   ["dark", darkTheme],
 ]);
 
-export { themes };
+const themeNames = ["light", "dark"];
+
+export { themes, themeNames };

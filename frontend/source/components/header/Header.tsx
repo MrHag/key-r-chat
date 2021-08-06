@@ -1,14 +1,11 @@
 import React from "react";
-import { AppBar, useTheme } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core";
-import { Typography } from "@material-ui/core";
-import { Toolbar } from "@material-ui/core";
+import { AppBar, Typography, Toolbar } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import { IconButton } from "@material-ui/core";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import { IconButton, Select, MenuItem, Menu } from "@material-ui/core";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { themeNames } from "themes";
 
 import { MY_PROFILE, MESSAGES, SETTINGS } from "constants/routes";
 
@@ -50,6 +47,16 @@ const useStyles = makeStyles((theme) => ({
       pointerEvents: "none",
     },
   },
+  themeSelect: {
+    marginLeft: "16px",
+    "&:before": {
+      borderColor: "white",
+    },
+  },
+  selectUnderline: {
+    color: "white",
+    borderColor: "white",
+  },
 }));
 
 const StyledMenu = withStyles({
@@ -59,18 +66,29 @@ const StyledMenu = withStyles({
   },
 })(Menu);
 
+const StyledSelect = withStyles({
+  root: {
+    "&:before": {
+      borderColor: "white",
+    },
+    color: "white",
+  },
+  icon: {
+    color: "white",
+  },
+})(Select);
+
 /* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
 
 import { PropsFromConnector } from ".";
 
 const Header: React.FC<PropsFromConnector> = ({
+  themeName,
   actionSignOut,
+  actionSetTheme,
 }: PropsFromConnector) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const userLogin = "User login(name)";
-
-  const theme = useTheme();
-  console.log("theme = ", theme);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -82,6 +100,10 @@ const Header: React.FC<PropsFromConnector> = ({
 
   const onLogoutClick = () => {
     actionSignOut();
+  };
+
+  const onThemeSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    actionSetTheme(e.target.value);
   };
 
   const classes = useStyles();
@@ -135,6 +157,23 @@ const Header: React.FC<PropsFromConnector> = ({
             {userLogin}
           </NavLink>
         </Typography>
+
+        <StyledSelect
+          className={classes.themeSelect}
+          color="primary"
+          // input={<Input classes={{ root: classes.selectUnderline }} />}
+          labelId="theme-select"
+          id="theme-select"
+          value={themeName}
+          label="Theme"
+          onChange={onThemeSelectChange}
+        >
+          {themeNames.map((theme) => (
+            <MenuItem value={theme} key={theme}>
+              {theme}
+            </MenuItem>
+          ))}
+        </StyledSelect>
       </Toolbar>
     </AppBar>
   );

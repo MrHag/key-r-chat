@@ -8,7 +8,6 @@ import { themes } from "themes";
 import { Layout } from "layout";
 
 const useStyles = makeStyles((theme) => {
-  console.log("theme = ", theme);
   return {
     app: {
       width: "100%",

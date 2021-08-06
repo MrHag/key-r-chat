@@ -4,6 +4,7 @@ import { Typography } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import { InputLabel, MenuItem } from "@material-ui/core";
 import { PropsFromConnector } from ".";
+import { themeNames } from "themes";
 
 const useStyles = makeStyles({
   root: {
@@ -31,8 +32,6 @@ const useStyles = makeStyles({
   },
 });
 
-const themeNames = ["light", "dark"];
-
 const Settings: React.FC<PropsFromConnector> = ({
   themeName,
 }: PropsFromConnector) => {
@@ -49,19 +48,22 @@ const Settings: React.FC<PropsFromConnector> = ({
       <Typography variant="h6">Settings</Typography>
       <div className={classes.list}>
         <div className={classes.block}>
-          <InputLabel className={classes.label} id="demo-simple-select-label">
+          <InputLabel className={classes.label} id="theme-select">
             Theme
           </InputLabel>
           <Select
             fullWidth
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="theme-select"
+            id="theme-select"
             value={selectedTheme}
             label="Theme"
             onChange={onThemeSelectChange}
           >
-            <MenuItem value={themeNames[0]}>{themeNames[0]}</MenuItem>
-            <MenuItem value={themeNames[1]}>{themeNames[1]}</MenuItem>
+            {themeNames.map((theme) => (
+              <MenuItem value={theme} key={theme}>
+                {theme}
+              </MenuItem>
+            ))}
           </Select>
         </div>
       </div>
