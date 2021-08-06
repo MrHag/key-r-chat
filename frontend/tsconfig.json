@@ -13,6 +13,8 @@
         "constants/*": ["./source/constants/*"],
         "store": ["./source/store"],
         "store/*": ["./source/store/*"],
+        "themes": ["./source/themes"],
+        "layout": ["./source/layout"],
       }
   },
   "exclude": [

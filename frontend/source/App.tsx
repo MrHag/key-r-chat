@@ -1,17 +1,11 @@
 import React from "react";
 import { ThemeProvider, makeStyles } from "@material-ui/styles";
-import { createTheme } from "@material-ui/core/styles";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
-import { PrivateRoute } from "components/private-route";
-import { Header } from "components/header";
-
-import { Messages } from "views/messages";
-import { MyProfile } from "views/my-profile";
-import { RootView } from "views/root-view";
-import { SignIn } from "views/sign-in";
-import { MESSAGES, MY_PROFILE, SETTINGS, SIGN_IN } from "constants/routes";
-import { Settings } from "views/settings";
+import { useSelector } from "react-redux";
+import { IAppStore } from "store";
+import { themes } from "themes";
+import { Layout } from "layout";
 
 const useStyles = makeStyles((theme) => {
   console.log("theme = ", theme);
@@ -26,24 +20,18 @@ const useStyles = makeStyles((theme) => {
   };
 });
 
-const defaultTheme = createTheme({});
-
 const App: React.FC = () => {
   const classes = useStyles();
 
+  const themeName = useSelector<IAppStore, string>(
+    (store) => store.settings.themeName
+  );
+
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={themes.get(themeName)}>
       <BrowserRouter>
         <div className={classes.app}>
-          <Header />
-          <Switch>
-            <Route path={SIGN_IN} component={SignIn} />
-
-            <PrivateRoute path={SETTINGS} component={Settings} />
-            <PrivateRoute path={MY_PROFILE} component={MyProfile} />
-            <PrivateRoute path={MESSAGES} component={Messages} />
-            <PrivateRoute path="/" component={RootView} />
-          </Switch>
+          <Layout />
         </div>
       </BrowserRouter>
     </ThemeProvider>
