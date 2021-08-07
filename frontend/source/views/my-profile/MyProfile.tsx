@@ -1,10 +1,12 @@
 import React from "react";
+import { View } from "views/view";
+import { Typography } from "@material-ui/core";
 
 const MyProfile: React.FC = () => {
   return (
-    <div>
-      <h1>My profile</h1>
-    </div>
+    <View>
+      <Typography variant="h6">My profile</Typography>
+    </View>
   );
 };
 

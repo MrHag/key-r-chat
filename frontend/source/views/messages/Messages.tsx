@@ -1,11 +1,11 @@
 import React from "react";
-
+import { View } from "views/view";
+import { Typography } from "@material-ui/core";
 const Messages: React.FC = () => {
-  console.log("Render!");
   return (
-    <div>
-      <h1>Messages view</h1>
-    </div>
+    <View>
+      <Typography variant="h6">Messages view</Typography>
+    </View>
   );
 };
 

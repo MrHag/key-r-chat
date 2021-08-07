@@ -1,20 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/styles";
-import { Typography, Paper } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import { InputLabel, MenuItem } from "@material-ui/core";
 import { PropsFromConnector } from ".";
 import { themeNames } from "themes";
+import { View } from "views/view";
 
 const useStyles = makeStyles({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
-    padding: "8px",
-  },
+  root: {},
   list: {
     display: "flex",
     flexDirection: "row",
@@ -36,17 +30,16 @@ const useStyles = makeStyles({
 
 const Settings: React.FC<PropsFromConnector> = ({
   themeName,
+  actionSetTheme,
 }: PropsFromConnector) => {
   const classes = useStyles();
 
-  const [selectedTheme, setSelectedTheme] = useState(themeName);
-
   const onThemeSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedTheme(e.target.value);
+    actionSetTheme(e.target.value);
   };
 
   return (
-    <Paper className={classes.root} square>
+    <View className={classes.root} square>
       <Typography variant="h6">Settings</Typography>
       <div className={classes.list}>
         <div className={classes.block}>
@@ -57,7 +50,7 @@ const Settings: React.FC<PropsFromConnector> = ({
             fullWidth
             labelId="theme-select"
             id="theme-select"
-            value={selectedTheme}
+            value={themeName}
             label="Theme"
             onChange={onThemeSelectChange}
           >
@@ -69,7 +62,7 @@ const Settings: React.FC<PropsFromConnector> = ({
           </Select>
         </div>
       </div>
-    </Paper>
+    </View>
   );
 };
 

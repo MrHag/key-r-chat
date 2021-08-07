@@ -6,6 +6,7 @@ import { Header } from "./Header";
 
 const mapState = (state: IAppStore) => ({
   themeName: state.settings.themeName,
+  isAuthorized: state.auth.isAuthorized,
 });
 
 const mapDispatch = {

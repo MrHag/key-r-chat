@@ -2,7 +2,8 @@ import React from "react";
 import { makeStyles, withStyles } from "@material-ui/core";
 import { AppBar, Typography, Toolbar } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import { IconButton, Select, MenuItem, Menu } from "@material-ui/core";
+import { IconButton, MenuItem, Menu } from "@material-ui/core";
+import { Select as BaseSelect } from "@material-ui/core";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { themeNames } from "themes";
@@ -47,16 +48,6 @@ const useStyles = makeStyles((theme) => ({
       pointerEvents: "none",
     },
   },
-  themeSelect: {
-    marginLeft: "16px",
-    "&:before": {
-      borderColor: "white",
-    },
-  },
-  selectUnderline: {
-    color: "white",
-    borderColor: "white",
-  },
 }));
 
 const StyledMenu = withStyles({
@@ -66,10 +57,18 @@ const StyledMenu = withStyles({
   },
 })(Menu);
 
+const Select = withStyles({
+  root: {
+    color: "white",
+    marginLeft: "16px",
+  },
+})(BaseSelect);
+
 /* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
 
 const Header: React.FC<PropsFromConnector> = ({
   themeName,
+  isAuthorized,
   actionSignOut,
   actionSetTheme,
 }: PropsFromConnector) => {
@@ -96,14 +95,16 @@ const Header: React.FC<PropsFromConnector> = ({
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          onClick={handleOnMenuClick}
-        >
-          <MenuIcon />
-        </IconButton>
+        {isAuthorized && (
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={handleOnMenuClick}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
 
         <Typography variant="h6" className={classes.space} title={userLogin}>
           <Link className={classes.link} to="/">
@@ -138,14 +139,15 @@ const Header: React.FC<PropsFromConnector> = ({
           </MenuItem>
         </StyledMenu>
 
-        <Typography variant="h6" className={classes.login} title={userLogin}>
-          <NavLink className={classes.link} to={MY_PROFILE} exact>
-            {userLogin}
-          </NavLink>
-        </Typography>
+        {isAuthorized && (
+          <Typography variant="h6" className={classes.login} title={userLogin}>
+            <NavLink className={classes.link} to={MY_PROFILE} exact>
+              {userLogin}
+            </NavLink>
+          </Typography>
+        )}
 
         <Select
-          className={classes.themeSelect}
           color="primary"
           labelId="theme-select"
           id="theme-select"
