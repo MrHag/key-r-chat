@@ -1,33 +1,17 @@
 import React from "react";
 import { makeStyles, withStyles } from "@material-ui/core";
-import { AppBar, Typography, Toolbar } from "@material-ui/core";
+import { AppBar, Toolbar } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { IconButton, MenuItem, Menu } from "@material-ui/core";
-import { Select as BaseSelect } from "@material-ui/core";
+import { Select } from "@material-ui/core";
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link as RouterLink, NavLink } from "react-router-dom";
 import { themeNames } from "themes";
 import { MY_PROFILE, MESSAGES, SETTINGS } from "constants/routes";
 import { PropsFromConnector } from ".";
+import { Link as BaseLink } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  login: {
-    marginRight: theme.spacing(0),
-    maxWidth: "64px",
-    whiteSpace: "nowrap",
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-  },
-  space: {
-    flexGrow: 1,
-    width: "100%",
-  },
-  title: {
-    flexGrow: 1,
-  },
+const useStyles = makeStyles(() => ({
   menu: {
     maxWidth: "356px",
     width: "100%",
@@ -40,13 +24,13 @@ const useStyles = makeStyles((theme) => ({
       pointerEvents: "none",
     },
   },
-  link: {
+  logo: {
     color: "white",
-    textDecoration: "none",
     flexGrow: 1,
-    "&.active": {
-      pointerEvents: "none",
-    },
+  },
+  themeSelector: {
+    marginLeft: "16px",
+    color: "white",
   },
 }));
 
@@ -56,13 +40,6 @@ const StyledMenu = withStyles({
     width: "100%",
   },
 })(Menu);
-
-const Select = withStyles({
-  root: {
-    color: "white",
-    marginLeft: "16px",
-  },
-})(BaseSelect);
 
 /* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
 
@@ -106,11 +83,13 @@ const Header: React.FC<PropsFromConnector> = ({
           </IconButton>
         )}
 
-        <Typography variant="h6" className={classes.space} title={userLogin}>
-          <Link className={classes.link} to="/">
-            Chat
-          </Link>
-        </Typography>
+        <BaseLink
+          component={RouterLink}
+          to="/"
+          className={`${classes.navLink} ${classes.logo}`}
+        >
+          Chat
+        </BaseLink>
 
         <StyledMenu
           className={classes.menu}
@@ -121,33 +100,44 @@ const Header: React.FC<PropsFromConnector> = ({
           onClose={handleClose}
         >
           <MenuItem onClick={handleClose}>
-            <NavLink className={classes.navLink} to={MESSAGES}>
-              <Typography variant="h6">Messages</Typography>
-            </NavLink>
+            <BaseLink
+              component={NavLink}
+              to={MESSAGES}
+              className={classes.navLink}
+            >
+              Messages
+            </BaseLink>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
-            <NavLink className={classes.navLink} to={SETTINGS}>
-              <Typography variant="h6">Settings</Typography>
-            </NavLink>
+            <BaseLink
+              component={NavLink}
+              to={SETTINGS}
+              className={classes.navLink}
+            >
+              Settings
+            </BaseLink>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
-            <a className={classes.navLink} onClick={onLogoutClick}>
-              <Typography variant="h6">Logout</Typography>
-            </a>
+            <BaseLink onClick={onLogoutClick} className={classes.navLink}>
+              Logout
+            </BaseLink>
           </MenuItem>
         </StyledMenu>
 
         {isAuthorized && (
-          <Typography variant="h6" className={classes.login} title={userLogin}>
-            <NavLink className={classes.link} to={MY_PROFILE} exact>
-              {userLogin}
-            </NavLink>
-          </Typography>
+          <BaseLink
+            component={NavLink}
+            to={MY_PROFILE}
+            className={classes.navLink}
+          >
+            {userLogin}
+          </BaseLink>
         )}
 
         <Select
+          className={classes.themeSelector}
           color="primary"
           labelId="theme-select"
           id="theme-select"

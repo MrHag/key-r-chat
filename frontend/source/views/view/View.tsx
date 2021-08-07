@@ -8,7 +8,7 @@ const View = withStyles({
     alignItems: "center",
     width: "100%",
     height: "100%",
-    padding: "0 8px 0 8px",
+    padding: "8px",
     borderRadius: 0,
   },
 })(Paper);
