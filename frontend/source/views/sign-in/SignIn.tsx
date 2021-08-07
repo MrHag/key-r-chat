@@ -1,9 +1,6 @@
 import React from "react";
-import { Modal } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import { TextField } from "@material-ui/core";
-import { Button } from "@material-ui/core";
-import { Typography } from "@material-ui/core";
+import { Modal, Button, Paper, Typography, TextField } from "@material-ui/core";
 import { Redirect } from "react-router";
 
 import { PropsFromConnector } from ".";
@@ -16,7 +13,6 @@ const useStyles = makeStyles(() => ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 400,
-    backgroundColor: "white",
     borderRadius: "8px",
     outline: "none",
     padding: "16px",
@@ -66,7 +62,7 @@ const SignIn: React.FC<PropsFromConnector> = ({
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
     >
-      <div className={classes.paper}>
+      <Paper className={classes.paper}>
         <Formik
           initialValues={{
             login: "",
@@ -115,7 +111,7 @@ const SignIn: React.FC<PropsFromConnector> = ({
             </Form>
           )}
         </Formik>
-      </div>
+      </Paper>
     </Modal>
   );
 };

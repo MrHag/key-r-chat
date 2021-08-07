@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
-import { Typography } from "@material-ui/core";
+import { Typography, Paper } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import { InputLabel, MenuItem } from "@material-ui/core";
 import { PropsFromConnector } from ".";
@@ -12,11 +12,13 @@ const useStyles = makeStyles({
     flexDirection: "column",
     alignItems: "center",
     width: "100%",
+    height: "100%",
+    padding: "8px",
   },
   list: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     width: "100%",
     height: "100%",
   },
@@ -44,7 +46,7 @@ const Settings: React.FC<PropsFromConnector> = ({
   };
 
   return (
-    <div className={classes.root}>
+    <Paper className={classes.root} square>
       <Typography variant="h6">Settings</Typography>
       <div className={classes.list}>
         <div className={classes.block}>
@@ -67,7 +69,7 @@ const Settings: React.FC<PropsFromConnector> = ({
           </Select>
         </div>
       </div>
-    </div>
+    </Paper>
   );
 };
 

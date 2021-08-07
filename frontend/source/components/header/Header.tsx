@@ -6,8 +6,8 @@ import { IconButton, Select, MenuItem, Menu } from "@material-ui/core";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { themeNames } from "themes";
-
 import { MY_PROFILE, MESSAGES, SETTINGS } from "constants/routes";
+import { PropsFromConnector } from ".";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,8 +32,8 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   navLink: {
-    color: "black",
     textDecoration: "none",
+    color: "unset",
     "&.active": {
       color: "red",
       pointerEvents: "none",
@@ -66,21 +66,7 @@ const StyledMenu = withStyles({
   },
 })(Menu);
 
-const StyledSelect = withStyles({
-  root: {
-    "&:before": {
-      borderColor: "white",
-    },
-    color: "white",
-  },
-  icon: {
-    color: "white",
-  },
-})(Select);
-
 /* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
-
-import { PropsFromConnector } from ".";
 
 const Header: React.FC<PropsFromConnector> = ({
   themeName,
@@ -135,19 +121,19 @@ const Header: React.FC<PropsFromConnector> = ({
         >
           <MenuItem onClick={handleClose}>
             <NavLink className={classes.navLink} to={MESSAGES}>
-              Messages
+              <Typography variant="h6">Messages</Typography>
             </NavLink>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
             <NavLink className={classes.navLink} to={SETTINGS}>
-              Settings
+              <Typography variant="h6">Settings</Typography>
             </NavLink>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
             <a className={classes.navLink} onClick={onLogoutClick}>
-              Logout
+              <Typography variant="h6">Logout</Typography>
             </a>
           </MenuItem>
         </StyledMenu>
@@ -158,10 +144,9 @@ const Header: React.FC<PropsFromConnector> = ({
           </NavLink>
         </Typography>
 
-        <StyledSelect
+        <Select
           className={classes.themeSelect}
           color="primary"
-          // input={<Input classes={{ root: classes.selectUnderline }} />}
           labelId="theme-select"
           id="theme-select"
           value={themeName}
@@ -173,7 +158,7 @@ const Header: React.FC<PropsFromConnector> = ({
               {theme}
             </MenuItem>
           ))}
-        </StyledSelect>
+        </Select>
       </Toolbar>
     </AppBar>
   );

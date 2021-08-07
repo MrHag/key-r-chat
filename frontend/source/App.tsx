@@ -1,3 +1,4 @@
+import "./index.scss";
 import React from "react";
 import { ThemeProvider, makeStyles } from "@material-ui/styles";
 import { BrowserRouter } from "react-router-dom";
@@ -7,7 +8,7 @@ import { IAppStore } from "store";
 import { themes } from "themes";
 import { Layout } from "layout";
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles(() => {
   return {
     app: {
       width: "100%",
