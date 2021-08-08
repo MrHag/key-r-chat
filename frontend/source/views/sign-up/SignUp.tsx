@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/styles";
 import { Button, Typography, TextField, Link } from "@material-ui/core";
 import { Redirect, Link as RouterLink } from "react-router-dom";
 import { View } from "views/view";
-import { SIGN_UP } from "constants/routes";
+import { SIGN_IN } from "constants/routes";
 import { PropsFromConnector } from ".";
 import { Form, Formik } from "formik";
 
@@ -17,6 +17,9 @@ const useStyles = makeStyles(() => ({
   textField: {
     marginBottom: "32px",
   },
+  passwordField: {
+    marginBottom: "8px",
+  },
   form: {
     display: "flex",
     flexDirection: "column",
@@ -27,21 +30,32 @@ const useStyles = makeStyles(() => ({
 interface IFormikValues {
   login: string;
   password: string;
+  confirmPassword: string;
 }
 
-const SignIn: React.FC<PropsFromConnector> = ({
+const SignUp: React.FC<PropsFromConnector> = ({
   isAuthorized,
   actionSignIn,
 }: PropsFromConnector) => {
   const classes = useStyles();
 
   const formikValidation = (values: IFormikValues) => {
-    const errors: { login?: string; password?: string } = {};
+    const errors: {
+      login?: string;
+      password?: string;
+      confirmPassword?: string;
+    } = {};
     if (values.login === "") {
       errors.login = "Login must not be empty!";
     }
     if (values.password === "") {
       errors.password = "Password must not be empty!";
+    }
+    if (values.confirmPassword === "") {
+      errors.confirmPassword = "Enter confirm password!";
+    }
+    if (values.password != values.confirmPassword) {
+      errors.confirmPassword = "Password don't match!";
     }
     return errors;
   };
@@ -56,6 +70,7 @@ const SignIn: React.FC<PropsFromConnector> = ({
         initialValues={{
           login: "",
           password: "",
+          confirmPassword: "",
         }}
         validate={formikValidation}
         onSubmit={(values) => {
@@ -65,7 +80,7 @@ const SignIn: React.FC<PropsFromConnector> = ({
         {(formik) => (
           <Form className={classes.form}>
             <Typography variant="h6" className={classes.title}>
-              Sign in
+              Sign up
             </Typography>
             <TextField
               autoFocus={true}
@@ -80,7 +95,7 @@ const SignIn: React.FC<PropsFromConnector> = ({
               helperText={formik.errors.login}
             />
             <TextField
-              className={classes.textField}
+              className={classes.passwordField}
               autoComplete="off"
               id="password"
               name="password"
@@ -90,15 +105,26 @@ const SignIn: React.FC<PropsFromConnector> = ({
               error={Boolean(formik.errors.password)}
               helperText={formik.errors.password}
             />
+            <TextField
+              className={classes.textField}
+              autoComplete="off"
+              id="confirmPassword"
+              name="confirmPassword"
+              label="Confirm password"
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              error={Boolean(formik.errors.confirmPassword)}
+              helperText={formik.errors.confirmPassword}
+            />
             <Link
               component={RouterLink}
-              to={SIGN_UP}
+              to={SIGN_IN}
               className={classes.textField}
             >
-              {"Don't have an acoount?"}
+              Already have an account?
             </Link>
             <Button variant="contained" color="primary" type="submit">
-              Login
+              Sign up
             </Button>
           </Form>
         )}
@@ -107,4 +133,4 @@ const SignIn: React.FC<PropsFromConnector> = ({
   );
 };
 
-export { SignIn };
+export { SignUp };

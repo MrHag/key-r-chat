@@ -8,7 +8,14 @@ import { Messages } from "views/messages";
 import { MyProfile } from "views/my-profile";
 import { RootView } from "views/root-view";
 import { SignIn } from "views/sign-in";
-import { MESSAGES, MY_PROFILE, SETTINGS, SIGN_IN } from "constants/routes";
+import { SignUp } from "views/sign-up";
+import {
+  MESSAGES,
+  MY_PROFILE,
+  SETTINGS,
+  SIGN_IN,
+  SIGN_UP,
+} from "constants/routes";
 import { Settings } from "views/settings";
 
 const Layout: React.FC = () => {
@@ -17,6 +24,7 @@ const Layout: React.FC = () => {
       <Header />
       <Switch>
         <Route path={SIGN_IN} component={SignIn} />
+        <Route path={SIGN_UP} component={SignUp} />
 
         <PrivateRoute path={SETTINGS} component={Settings} />
         <PrivateRoute path={MY_PROFILE} component={MyProfile} />

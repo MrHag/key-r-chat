@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "views/view";
 import { Typography } from "@material-ui/core";
+
 const Messages: React.FC = () => {
   return (
     <View>

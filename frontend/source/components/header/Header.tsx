@@ -9,7 +9,7 @@ import { Link as RouterLink, NavLink } from "react-router-dom";
 import { themeNames } from "themes";
 import { MY_PROFILE, MESSAGES, SETTINGS } from "constants/routes";
 import { PropsFromConnector } from ".";
-import { Link as BaseLink } from "@material-ui/core";
+import { Link } from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
   menu: {
@@ -83,13 +83,13 @@ const Header: React.FC<PropsFromConnector> = ({
           </IconButton>
         )}
 
-        <BaseLink
+        <Link
           component={RouterLink}
           to="/"
           className={`${classes.navLink} ${classes.logo}`}
         >
           Chat
-        </BaseLink>
+        </Link>
 
         <StyledMenu
           className={classes.menu}
@@ -100,40 +100,28 @@ const Header: React.FC<PropsFromConnector> = ({
           onClose={handleClose}
         >
           <MenuItem onClick={handleClose}>
-            <BaseLink
-              component={NavLink}
-              to={MESSAGES}
-              className={classes.navLink}
-            >
+            <Link component={NavLink} to={MESSAGES} className={classes.navLink}>
               Messages
-            </BaseLink>
+            </Link>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
-            <BaseLink
-              component={NavLink}
-              to={SETTINGS}
-              className={classes.navLink}
-            >
+            <Link component={NavLink} to={SETTINGS} className={classes.navLink}>
               Settings
-            </BaseLink>
+            </Link>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
-            <BaseLink onClick={onLogoutClick} className={classes.navLink}>
+            <Link onClick={onLogoutClick} className={classes.navLink}>
               Logout
-            </BaseLink>
+            </Link>
           </MenuItem>
         </StyledMenu>
 
         {isAuthorized && (
-          <BaseLink
-            component={NavLink}
-            to={MY_PROFILE}
-            className={classes.navLink}
-          >
+          <Link component={NavLink} to={MY_PROFILE} className={classes.navLink}>
             {userLogin}
-          </BaseLink>
+          </Link>
         )}
 
         <Select
