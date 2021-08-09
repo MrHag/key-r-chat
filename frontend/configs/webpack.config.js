@@ -92,6 +92,8 @@ module.exports = function moduleGenerator(mode) {
         'views': path.resolve(__dirname, '../source/views'),
         'constants': path.resolve(__dirname, '../source/constants'),
         'store': path.resolve(__dirname, '../source/store'),
+        'themes': path.resolve(__dirname, '../source/themes'),
+        'layout': path.resolve(__dirname, '../source/layout')
       }
     },
 

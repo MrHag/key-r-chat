@@ -1,54 +1,36 @@
 import React from "react";
-import { AppBar, useTheme } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core";
-import { Typography } from "@material-ui/core";
-import { Toolbar } from "@material-ui/core";
+import { AppBar, Toolbar } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import { IconButton } from "@material-ui/core";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import { IconButton, MenuItem, Menu } from "@material-ui/core";
+import { Select } from "@material-ui/core";
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-
+import { Link as RouterLink, NavLink } from "react-router-dom";
+import { themeNames } from "themes";
 import { MY_PROFILE, MESSAGES, SETTINGS } from "constants/routes";
+import { PropsFromConnector } from ".";
+import { Link } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  login: {
-    marginRight: theme.spacing(0),
-    maxWidth: "64px",
-    whiteSpace: "nowrap",
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-  },
-  space: {
-    flexGrow: 1,
-    width: "100%",
-  },
-  title: {
-    flexGrow: 1,
-  },
+const useStyles = makeStyles(() => ({
   menu: {
     maxWidth: "356px",
     width: "100%",
   },
   navLink: {
-    color: "black",
     textDecoration: "none",
+    color: "unset",
     "&.active": {
       color: "red",
       pointerEvents: "none",
     },
   },
-  link: {
+  logo: {
     color: "white",
-    textDecoration: "none",
     flexGrow: 1,
-    "&.active": {
-      pointerEvents: "none",
-    },
+  },
+  themeSelector: {
+    marginLeft: "16px",
+    color: "white",
   },
 }));
 
@@ -61,16 +43,14 @@ const StyledMenu = withStyles({
 
 /* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
 
-import { PropsFromConnector } from ".";
-
 const Header: React.FC<PropsFromConnector> = ({
+  themeName,
+  isAuthorized,
   actionSignOut,
+  actionSetTheme,
 }: PropsFromConnector) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const userLogin = "User login(name)";
-
-  const theme = useTheme();
-  console.log("theme = ", theme);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -84,24 +64,32 @@ const Header: React.FC<PropsFromConnector> = ({
     actionSignOut();
   };
 
+  const onThemeSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    actionSetTheme(e.target.value);
+  };
+
   const classes = useStyles();
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          onClick={handleOnMenuClick}
-        >
-          <MenuIcon />
-        </IconButton>
+        {isAuthorized && (
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={handleOnMenuClick}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
 
-        <Typography variant="h6" className={classes.space} title={userLogin}>
-          <Link className={classes.link} to="/">
-            Chat
-          </Link>
-        </Typography>
+        <Link
+          component={RouterLink}
+          to="/"
+          className={`${classes.navLink} ${classes.logo}`}
+        >
+          Chat
+        </Link>
 
         <StyledMenu
           className={classes.menu}
@@ -112,29 +100,45 @@ const Header: React.FC<PropsFromConnector> = ({
           onClose={handleClose}
         >
           <MenuItem onClick={handleClose}>
-            <NavLink className={classes.navLink} to={MESSAGES}>
+            <Link component={NavLink} to={MESSAGES} className={classes.navLink}>
               Messages
-            </NavLink>
+            </Link>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
-            <NavLink className={classes.navLink} to={SETTINGS}>
+            <Link component={NavLink} to={SETTINGS} className={classes.navLink}>
               Settings
-            </NavLink>
+            </Link>
           </MenuItem>
 
           <MenuItem onClick={handleClose}>
-            <a className={classes.navLink} onClick={onLogoutClick}>
+            <Link onClick={onLogoutClick} className={classes.navLink}>
               Logout
-            </a>
+            </Link>
           </MenuItem>
         </StyledMenu>
 
-        <Typography variant="h6" className={classes.login} title={userLogin}>
-          <NavLink className={classes.link} to={MY_PROFILE} exact>
+        {isAuthorized && (
+          <Link component={NavLink} to={MY_PROFILE} className={classes.navLink}>
             {userLogin}
-          </NavLink>
-        </Typography>
+          </Link>
+        )}
+
+        <Select
+          className={classes.themeSelector}
+          color="primary"
+          labelId="theme-select"
+          id="theme-select"
+          value={themeName}
+          label="Theme"
+          onChange={onThemeSelectChange}
+        >
+          {themeNames.map((theme) => (
+            <MenuItem value={theme} key={theme}>
+              {theme}
+            </MenuItem>
+          ))}
+        </Select>
       </Toolbar>
     </AppBar>
   );

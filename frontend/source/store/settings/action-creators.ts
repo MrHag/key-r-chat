@@ -1,6 +1,6 @@
 export const SET_THEME = "settings/SET_THEME";
 
-interface ISetTheme {
+export interface ISetTheme {
   type: string;
   payload: {
     themeName: string;

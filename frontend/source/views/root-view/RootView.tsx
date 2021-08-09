@@ -1,10 +1,12 @@
 import React from "react";
+import { Typography } from "@material-ui/core";
+import { View } from "views/view";
 
 const RootView: React.FC = () => {
   return (
-    <div>
-      <h1>Root view</h1>
-    </div>
+    <View>
+      <Typography variant="h6">Root view</Typography>
+    </View>
   );
 };
 

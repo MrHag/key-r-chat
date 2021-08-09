@@ -1,4 +1,5 @@
 import { Settings } from "./Settings";
+import { actionSetTheme } from "store/settings/actions";
 
 import { connect, ConnectedProps } from "react-redux";
 import { IAppStore } from "store";
@@ -7,7 +8,11 @@ const mapState = (store: IAppStore) => ({
   themeName: store.settings.themeName,
 });
 
-const connector = connect(mapState, null);
+const mapDispatch = {
+  actionSetTheme,
+};
+
+const connector = connect(mapState, mapDispatch);
 
 export type PropsFromConnector = ConnectedProps<typeof connector>;
 

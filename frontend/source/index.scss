@@ -9,8 +9,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html {
-  padding: 0;
+div {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
 #root {
