@@ -1,7 +1,9 @@
+use std::convert::Infallible;
+
 use futures::{SinkExt, StreamExt};
 use rbatis::executor::Executor;
 use warp::ws::{Message, WebSocket};
-use warp::Filter;
+use warp::{Filter, Rejection, Reply};
 
 use crate::lib::context::*;
 use crate::lib::database::entities::*;
@@ -12,7 +14,7 @@ use crate::query_as;
 use rbatis::crud::*;
 
 pub async fn make_route(
-) -> impl Filter<Extract = (impl warp::reply::Reply,), Error = warp::Rejection> + Copy {
+) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Copy {
     let with_context = warp::any().map(move || CONTEXT.clone());
 
     let authorize = warp::any()
@@ -23,16 +25,16 @@ pub async fn make_route(
             authorizefn(&token, context.rbdb.clone()).await
         });
 
-    let login_route = warp::post()
-        .and(warp::path("login"))
+    let login_route =      warp::path("login")
+    .and(warp::post())
         .and(query_as!(LoginRequest))
         .and(with_context)
         .and_then(move |req: LoginRequest, context: Context| async move {
             login(&req.login, &req.password, context.rbdb.clone()).await
         });
 
-    let reg_route = warp::post()
-        .and(warp::path("registration"))
+    let reg_route = warp::path("registration")
+        .and(warp::post())
         .and(query_as!(RegistrationRequest))
         .and(with_context)
         .and_then(
@@ -109,14 +111,14 @@ pub async fn make_route(
                 .remove_by_wrapper::<User>(&context.rbdb.rb.new_wrapper())
                 .await
             {
-                Err(_err) => Err(DataBaseError::rej()),
+                Err(_err) => Err(InternalDataBaseError::rej()),
                 Ok(res) => match context
                     .rbdb
                     .rb
                     .exec("ALTER TABLE users AUTO_INCREMENT = 1; ALTER TABLE tokens AUTO_INCREMENT = 1", &vec![]).await
                 {
                     Ok(_) => Ok(warp::reply::json(&res)),
-                    Err(_) => Err(DataBaseError::rej()),
+                    Err(_) => Err(InternalDataBaseError::rej()),
                 },
             }
         });
@@ -130,6 +132,7 @@ pub async fn make_route(
     //         }))
     //     });
     let route = reg_route.or(login_route).or(ws_route);
+
     #[cfg(debug_assertions)]
     return route.or(delete_route);
     #[cfg(not(debug_assertions))]

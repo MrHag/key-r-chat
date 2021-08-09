@@ -1,3 +1,5 @@
+use std::{convert::Infallible, error::Error};
+
 use chrono::{Duration, Utc};
 use hmac::{crypto_mac::InvalidKeyLength, Hmac, Mac, NewMac};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -10,7 +12,7 @@ use crate::lib::{
     requests::validation::Validation,
 };
 use sha2::Sha256;
-use warp::{Filter, Rejection, Reply};
+use warp::{Filter, Rejection, Reply, hyper::StatusCode};
 
 pub async fn authorizefn(token: &String, rbdb: ARbDb) -> Result<User, Rejection> {
     match rbdb.get_token(&token).await {
@@ -22,7 +24,7 @@ pub async fn authorizefn(token: &String, rbdb: ARbDb) -> Result<User, Rejection>
             match token.exp_date.unwrap() >= Utc::now().naive_utc() {
                 false => Err(AuthError::rej()),
                 true => match rbdb.user_by_id(&token.user_id.unwrap()).await {
-                    Err(_err) => Err(DataBaseError::rej()),
+                    Err(_err) => Err(InternalDataBaseError::rej()),
                     Ok(user) => Ok(user),
                 },
             }
@@ -69,7 +71,7 @@ pub async fn login(
     };
 
     match rbdb.SaveObj(&token, &[]).await {
-        Err(_err) => Err(DataBaseError::rej()),
+        Err(_err) => Err(InternalDataBaseError::rej()),
         Ok(_) => Ok(warp::reply::json(&LoginReply { token: token_str })),
     }
 }
@@ -91,4 +93,49 @@ pub fn try_validate<T: Validation>(to_validate: T) -> Result<T, Rejection> {
         Ok(()) => Ok(to_validate),
         Err(_err) => Err(InvalidUserDataFormat::rej()),
     }
+}
+
+
+pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
+    let code;
+    let message;
+
+    if err.is_not_found() {
+        code = StatusCode::NOT_FOUND;
+        message = "NOT_FOUND".to_owned();
+    } else if let Some(e) = err.find::<warp::filters::body::BodyDeserializeError>() {
+        message = match e.source() {
+            Some(cause) => {
+                format!("FIELD_ERROR: {}", cause.to_string())
+            }
+            None => "BAD_REQUEST".to_owned(),
+        };
+        code = StatusCode::BAD_REQUEST;
+    } else if let Some(_) = err.find::<warp::reject::MethodNotAllowed>() {
+        code = StatusCode::METHOD_NOT_ALLOWED;
+        message = "METHOD_NOT_ALLOWED".to_owned();
+    } else if let Some(_) = err.find::<AuthError>() {
+        code = StatusCode::UNAUTHORIZED;
+        message = "UNAUTHORIZED".to_owned();
+    } else if let Some(_) = err.find::<LoginError>() {
+        code = StatusCode::BAD_REQUEST;
+        message = "BAD_REQUEST".to_owned();
+    } else if let Some(_) = err.find::<DataBaseError>() {
+        code = StatusCode::BAD_REQUEST;
+        message = "BAD_REQUEST".to_owned();
+    } else if let Some(_) = err.find::<InternalDataBaseError>() {
+        code = StatusCode::INTERNAL_SERVER_ERROR;
+        message = "INTERNAL_SERVER_ERROR: DATABASE".to_owned();
+    } else if let Some(_) = err.find::<InvalidUserDataFormat>() {
+        code = StatusCode::BAD_REQUEST;
+        message = "INVALID_USER_DATA_FORMAT".to_owned();
+    } else {
+        eprintln!("unhandled rejection: {:?}", err);
+        code = StatusCode::INTERNAL_SERVER_ERROR;
+        message = format!("UNHANDLED_REJECTION(IT'S A BUG): {:?}", err);
+    }
+
+    let error = ErrorModel{ message, code: code.as_u16() };
+
+    Ok(warp::reply::with_status(error, code))
 }

@@ -4,13 +4,13 @@ use warp::{Rejection, Reply};
 
 use crate::extract;
 use crate::lib::replyes::entities::*;
-use crate::start;
+use crate::link_db;
 
 use super::routes::routes::make_route;
 
 #[tokio::test]
 async fn start_test() {
-    start().await;
+    link_db().await;
     println!("0");
     assert!(extract(db_drop_query().await));
     println!("1");

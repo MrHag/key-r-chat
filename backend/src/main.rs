@@ -1,4 +1,5 @@
 use lib::context::CONTEXT;
+use warp::Filter;
 
 #[macro_use]
 extern crate lazy_static;
@@ -6,7 +7,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate rbatis;
 
-use crate::lib::routes::routes::make_route;
+use crate::lib::routes::{functions::handle_rejection, routes::make_route};
 mod lib;
 
 #[tokio::main]
@@ -14,19 +15,23 @@ async fn main() {
     start().await;
 }
 
-async fn start() {
-    fast_log::init_log("requests.log", 1000, log::Level::Info, None, true).unwrap();
-
+async fn link_db() {
     CONTEXT
         .rbdb
         .rb
         .link("mysql://lostback:U1234@localhost:3306/lostback")
         .await
         .unwrap();
+}
 
-    let route = make_route().await;
+async fn start() {
+    fast_log::init_log("requests.log", 1000, log::Level::Info, None, true).unwrap();
+
+    link_db().await;
+
+    let route = make_route().await.recover(handle_rejection);
 
     let port = 8080;
     println!("starting server listening on ::{}", port);
-    tokio::task::spawn(warp::serve(route).run(([0, 0, 0, 0], port)));
+    warp::serve(route).run(([0, 0, 0, 0], port)).await
 }
