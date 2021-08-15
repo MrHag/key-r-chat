@@ -46,6 +46,7 @@
     "@types/classnames": "^2.2.11",
     "@types/react-router": "^5.1.9",
     "@types/react-router-dom": "^5.1.7",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "formik": "^2.2.9",
     "react": "^17.0.1",

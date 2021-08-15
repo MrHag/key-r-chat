@@ -1,11 +1,14 @@
-const path = require('path');
+const path = require("path");
 
-module.exports = function() {
+module.exports = function () {
   return {
-    contentBase: path.join(__dirname, 'build'),
+    contentBase: path.join(__dirname, "build"),
     compress: true,
     port: 3000,
-    host: '0.0.0.0',
-     hot: true,
-  }
-}
+    proxy: {
+      "/api": "http://localhost:8080",
+    },
+    host: "0.0.0.0",
+    hot: true,
+  };
+};

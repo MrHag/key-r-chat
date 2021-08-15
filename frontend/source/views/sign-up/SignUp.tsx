@@ -6,6 +6,7 @@ import { View } from "views/view";
 import { SIGN_IN } from "constants/routes";
 import { PropsFromConnector } from ".";
 import { Form, Formik } from "formik";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -60,6 +61,18 @@ const SignUp: React.FC<PropsFromConnector> = ({
     return errors;
   };
 
+  const formikSubmit = async (values: IFormikValues) => {
+    console.log("Values = ", values);
+    try {
+      const result = await axios({
+        method: "post",
+        url: `/api/registration?login=${values.login}&password=${values.password}`,
+      });
+    } catch (e) {
+      console.log("e = ", e);
+    }
+  };
+
   if (isAuthorized) {
     return <Redirect to="/" />;
   }
@@ -73,9 +86,7 @@ const SignUp: React.FC<PropsFromConnector> = ({
           confirmPassword: "",
         }}
         validate={formikValidation}
-        onSubmit={(values) => {
-          actionSignIn(values.login, values.password);
-        }}
+        onSubmit={formikSubmit}
       >
         {(formik) => (
           <Form className={classes.form}>

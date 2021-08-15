@@ -119,7 +119,11 @@ const Header: React.FC<PropsFromConnector> = ({
         </StyledMenu>
 
         {isAuthorized && (
-          <Link component={NavLink} to={MY_PROFILE} className={classes.navLink}>
+          <Link
+            component={RouterLink}
+            to={MY_PROFILE}
+            className={classes.navLink}
+          >
             {userLogin}
           </Link>
         )}

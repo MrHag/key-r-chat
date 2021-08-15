@@ -5,7 +5,7 @@ export interface IAuthStore {
 }
 
 const UserDefaultState: IAuthStore = {
-  isAuthorized: true,
+  isAuthorized: false,
 };
 
 const reducer = (state = UserDefaultState, action: ActionType): IAuthStore => {
