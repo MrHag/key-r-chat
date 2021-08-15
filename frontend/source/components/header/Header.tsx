@@ -46,11 +46,11 @@ const StyledMenu = withStyles({
 const Header: React.FC<PropsFromConnector> = ({
   themeName,
   isAuthorized,
+  login,
   actionSignOut,
   actionSetTheme,
 }: PropsFromConnector) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const userLogin = "User login(name)";
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -124,7 +124,7 @@ const Header: React.FC<PropsFromConnector> = ({
             to={MY_PROFILE}
             className={classes.navLink}
           >
-            {userLogin}
+            {login}
           </Link>
         )}
 

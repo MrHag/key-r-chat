@@ -1,12 +1,11 @@
 import React from "react";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles, withStyles } from "@material-ui/styles";
 import { Button, Typography, TextField, Link } from "@material-ui/core";
 import { Redirect, Link as RouterLink } from "react-router-dom";
 import { View } from "views/view";
 import { SIGN_IN } from "constants/routes";
 import { PropsFromConnector } from ".";
 import { Form, Formik } from "formik";
-import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -28,6 +27,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ErrorMsg = withStyles({
+  root: {
+    color: "red",
+  },
+})(Typography);
+
 interface IFormikValues {
   login: string;
   password: string;
@@ -36,7 +41,8 @@ interface IFormikValues {
 
 const SignUp: React.FC<PropsFromConnector> = ({
   isAuthorized,
-  actionSignIn,
+  signUp,
+  actionSignUp,
 }: PropsFromConnector) => {
   const classes = useStyles();
 
@@ -62,16 +68,12 @@ const SignUp: React.FC<PropsFromConnector> = ({
   };
 
   const formikSubmit = async (values: IFormikValues) => {
-    console.log("Values = ", values);
-    try {
-      const result = await axios({
-        method: "post",
-        url: `/api/registration?login=${values.login}&password=${values.password}`,
-      });
-    } catch (e) {
-      console.log("e = ", e);
-    }
+    actionSignUp(values.login, values.password);
   };
+
+  const errorMsg = signUp?.errorMsg && (
+    <ErrorMsg variant="h6">{signUp.errorMsg}</ErrorMsg>
+  );
 
   if (isAuthorized) {
     return <Redirect to="/" />;
@@ -93,6 +95,7 @@ const SignUp: React.FC<PropsFromConnector> = ({
             <Typography variant="h6" className={classes.title}>
               Sign up
             </Typography>
+            {errorMsg}
             <TextField
               autoFocus={true}
               className={classes.textField}

@@ -15,6 +15,7 @@
         "store/*": ["./source/store/*"],
         "themes": ["./source/themes"],
         "layout": ["./source/layout"],
+        "common/*": ["./source/common/*"]
       }
   },
   "exclude": [

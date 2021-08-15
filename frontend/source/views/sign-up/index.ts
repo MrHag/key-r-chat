@@ -1,14 +1,15 @@
 import { connect, ConnectedProps } from "react-redux";
-import { actionSignIn } from "store/auth/actions";
+import { actionSignUp } from "store/auth/actions";
 import { SignUp } from "./SignUp";
 import { IAppStore } from "store";
 
 const mapState = (state: IAppStore) => ({
   isAuthorized: state.auth.isAuthorized,
+  signUp: state.auth.signUp,
 });
 
 const mapDispatch = {
-  actionSignIn,
+  actionSignUp,
 };
 
 const connector = connect(mapState, mapDispatch);
