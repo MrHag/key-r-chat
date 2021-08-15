@@ -25,17 +25,18 @@ async fn link_db() {
 }
 
 async fn start() {
-    fast_log::init_log("requests.log", 1000, log::Level::Info, None, true).unwrap();
+    fast_log::init_log("requests.log", 1000, log::Level::Trace, None, true).unwrap();
 
     link_db().await;
 
     let cors = warp::cors()
         .allow_any_origin()
+        // .allow_headers(vec!["User-Agent", "Sec-Fetch-Mode", "Referer", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"])
         .allow_methods(vec!["GET", "POST", "DELETE"]);
     let route = warp::any()
         .and(make_route().await)
-        .with(cors)
-        .recover(handle_rejection);
+        .recover(handle_rejection)
+        .with(cors);
 
     let port = 8080;
     println!("starting server listening on ::{}", port);

@@ -8,6 +8,12 @@ impl Validation for LoginRequest {
 }
 
 impl Validation for RegistrationRequest {
+    #[cfg(debug_assertions)]
+    fn validate(&self) -> Result<(), &str> {
+        Ok(())
+    }
+    
+    #[cfg(release_assertions)]
     fn validate(&self) -> Result<(), &str> {
         if !(3..=32).contains(&self.login.len()) {
             return Err("Login length can be from 3 to 32");
