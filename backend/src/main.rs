@@ -25,7 +25,7 @@ async fn link_db() {
 }
 
 async fn start() {
-    fast_log::init_log("requests.log", 1000, log::Level::Trace, None, true).unwrap();
+    fast_log::init_log("requests.log", 1000, log::Level::Info, None, true).unwrap();
 
     link_db().await;
 
