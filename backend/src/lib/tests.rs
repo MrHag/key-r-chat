@@ -26,7 +26,7 @@ async fn start_test() {
 async fn db_drop_query() -> Result<impl Reply, Rejection> {
     let route = make_route().await;
 
-    let req = warp::test::request().method("DELETE").path("/drop_db");
+    let req = warp::test::request().method("DELETE").path("/api/drop_db");
 
     req.filter(&route).await
 }
@@ -36,7 +36,7 @@ async fn error_registration_query() -> Result<impl Reply, Rejection> {
 
     let req = warp::test::request()
         .method("POST")
-        .path("/registration?login=1&password=1");
+        .path("/api/registration?login=1&password=1");
 
     req.filter(&route).await
 }
@@ -46,7 +46,7 @@ async fn registration_query() -> Result<impl Reply, Rejection> {
 
     let req = warp::test::request()
         .method("POST")
-        .path("/registration?login=vasya&password=notgay");
+        .path("/api/registration?login=vasya&password=notgay");
 
     req.filter(&route).await
 }
@@ -56,7 +56,7 @@ async fn login_query() -> Result<impl Reply, Rejection> {
 
     let req = warp::test::request()
         .method("POST")
-        .path("/login?login=vasya&password=notgay");
+        .path("/api/login?login=vasya&password=notgay");
 
     req.filter(&route).await
 }

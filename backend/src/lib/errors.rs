@@ -1,5 +1,8 @@
-use warp::{Rejection, Reply, reject::{self, Reject}};
 use serde_derive::Serialize;
+use warp::{
+    reject::{self, Reject},
+    Rejection, Reply,
+};
 
 pub trait ToRejection: Reject + Default {
     fn rej() -> Rejection;
@@ -36,7 +39,7 @@ impl<T: Reject + Default> ToRejection for T {
 }
 
 #[derive(Serialize)]
-pub struct ErrorModel{
+pub struct ErrorModel {
     pub message: String,
     pub code: u16,
 }

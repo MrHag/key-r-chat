@@ -29,7 +29,13 @@ async fn start() {
 
     link_db().await;
 
-    let route = make_route().await.recover(handle_rejection);
+    let cors = warp::cors()
+        .allow_any_origin()
+        .allow_methods(vec!["GET", "POST", "DELETE"]);
+    let route = warp::any()
+        .and(make_route().await)
+        .with(cors)
+        .recover(handle_rejection);
 
     let port = 8080;
     println!("starting server listening on ::{}", port);

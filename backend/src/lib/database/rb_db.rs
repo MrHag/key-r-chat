@@ -11,7 +11,7 @@ impl RbDb {
     pub fn new() -> RbDb {
         RbDb { rb: Rbatis::new() }
     }
-    pub async fn SaveObj<T>(&self, obj: &T, skips: &[Skip<'_>]) -> Result<DBExecResult, String>
+    pub async fn save_obj<T>(&self, obj: &T, skips: &[Skip<'_>]) -> Result<DBExecResult, String>
     where
         T: CRUDTable,
     {

@@ -12,7 +12,7 @@ use crate::lib::{
     requests::validation::Validation,
 };
 use sha2::Sha256;
-use warp::{Filter, Rejection, Reply, hyper::StatusCode};
+use warp::{cors::CorsForbidden, hyper::StatusCode, Rejection, Reply};
 
 pub async fn authorizefn(token: &String, rbdb: ARbDb) -> Result<User, Rejection> {
     match rbdb.get_token(&token).await {
@@ -70,7 +70,7 @@ pub async fn login(
         user_id: user.id,
     };
 
-    match rbdb.SaveObj(&token, &[]).await {
+    match rbdb.save_obj(&token, &[]).await {
         Err(_err) => Err(InternalDataBaseError::rej()),
         Ok(_) => Ok(warp::reply::json(&LoginReply { token: token_str })),
     }
@@ -95,7 +95,6 @@ pub fn try_validate<T: Validation>(to_validate: T) -> Result<T, Rejection> {
     }
 }
 
-
 pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
     let code;
     let message;
@@ -112,6 +111,9 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
         };
         code = StatusCode::BAD_REQUEST;
     } else if let Some(_) = err.find::<warp::reject::MethodNotAllowed>() {
+        code = StatusCode::METHOD_NOT_ALLOWED;
+        message = "METHOD_NOT_ALLOWED".to_owned();
+    } else if let Some(_) = err.find::<CorsForbidden>() {
         code = StatusCode::METHOD_NOT_ALLOWED;
         message = "METHOD_NOT_ALLOWED".to_owned();
     } else if let Some(_) = err.find::<AuthError>() {
@@ -135,7 +137,10 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
         message = format!("UNHANDLED_REJECTION(IT'S A BUG): {:?}", err);
     }
 
-    let error = ErrorModel{ message, code: code.as_u16() };
+    let error = ErrorModel {
+        message,
+        code: code.as_u16(),
+    };
 
     Ok(warp::reply::with_status(error, code))
 }
