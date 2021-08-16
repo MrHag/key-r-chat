@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles, withStyles } from "@material-ui/core";
-import { AppBar, Toolbar } from "@material-ui/core";
+import { AppBar, Toolbar, Drawer, ListItem, List } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { IconButton, MenuItem, Menu } from "@material-ui/core";
 import { Select } from "@material-ui/core";
@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
   navLink: {
     textDecoration: "none",
     color: "unset",
+    padding: "8px 16px",
     "&.active": {
       color: "red",
       pointerEvents: "none",
@@ -32,14 +33,23 @@ const useStyles = makeStyles(() => ({
     marginLeft: "16px",
     color: "white",
   },
+  logoutLink: {
+    marginTop: "32px",
+  },
 }));
 
-const StyledMenu = withStyles({
-  paper: {
-    maxWidth: "356px",
-    width: "100%",
+const StyledListItem = withStyles({
+  root: {
+    padding: 0,
   },
-})(Menu);
+})(MenuItem);
+
+const StyledDrawer = withStyles({
+  paper: {
+    maxWidth: "50vw",
+    paddingRight: "32px",
+  },
+})(Drawer);
 
 /* TODO: Maybe you should place profile link on the right side of app bar (on user login) */
 
@@ -50,6 +60,7 @@ const Header: React.FC<PropsFromConnector> = ({
   actionSignOut,
   actionSetTheme,
 }: PropsFromConnector) => {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClose = () => {
@@ -68,7 +79,18 @@ const Header: React.FC<PropsFromConnector> = ({
     actionSetTheme(e.target.value);
   };
 
-  const classes = useStyles();
+  const listLinks = [
+    ["Messages", MESSAGES],
+    ["Settings", SETTINGS],
+    ["Profile", MY_PROFILE],
+  ].map((link, index) => (
+    <StyledListItem onClick={handleClose} key={index}>
+      <Link component={NavLink} to={link[1]} className={classes.navLink}>
+        {link[0]}
+      </Link>
+    </StyledListItem>
+  ));
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -91,32 +113,23 @@ const Header: React.FC<PropsFromConnector> = ({
           Chat
         </Link>
 
-        <StyledMenu
+        <StyledDrawer
           className={classes.menu}
           id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
+          anchor="left"
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>
-            <Link component={NavLink} to={MESSAGES} className={classes.navLink}>
-              Messages
-            </Link>
-          </MenuItem>
+          <List>
+            {listLinks}
 
-          <MenuItem onClick={handleClose}>
-            <Link component={NavLink} to={SETTINGS} className={classes.navLink}>
-              Settings
-            </Link>
-          </MenuItem>
-
-          <MenuItem onClick={handleClose}>
-            <Link onClick={onLogoutClick} className={classes.navLink}>
-              Logout
-            </Link>
-          </MenuItem>
-        </StyledMenu>
+            <StyledListItem className={classes.logoutLink}>
+              <Link onClick={onLogoutClick} className={classes.navLink}>
+                Logout
+              </Link>
+            </StyledListItem>
+          </List>
+        </StyledDrawer>
 
         {isAuthorized && (
           <Link
