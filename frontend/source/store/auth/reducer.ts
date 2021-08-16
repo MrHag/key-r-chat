@@ -23,20 +23,29 @@ export interface IAuthStore {
   };
 }
 
-const DefaultState: IAuthStore = {
+let DefaultState: IAuthStore = {
   isAuthorized: false,
 };
+
+if (localStorage.getItem("auth")) {
+  DefaultState = JSON.parse(localStorage.getItem("auth"));
+}
 
 const reducer = (state = DefaultState, action: ActionType): IAuthStore => {
   switch (action.type) {
     case SIGN_IN_SUCCESS: {
       const a = action as ISignInSuccess;
-      return {
+
+      const authState = {
         ...state,
         isAuthorized: true,
         login: a.login,
         token: a.token,
       };
+
+      localStorage.setItem("auth", JSON.stringify(authState));
+
+      return authState;
     }
     case SIGN_IN_FAIL: {
       const a = action as ISignInFail;

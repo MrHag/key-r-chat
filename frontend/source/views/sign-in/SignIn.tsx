@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles, withStyles } from "@material-ui/styles";
 import { Button, Typography, TextField, Link } from "@material-ui/core";
 import { Redirect, Link as RouterLink } from "react-router-dom";
 import { View } from "views/view";
@@ -24,6 +24,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ErrorMsg = withStyles({
+  root: {
+    color: "red",
+    marginBottom: "32px",
+    fontSize: "14px",
+  },
+})(Typography);
+
 interface IFormikValues {
   login: string;
   password: string;
@@ -31,6 +39,7 @@ interface IFormikValues {
 
 const SignIn: React.FC<PropsFromConnector> = ({
   isAuthorized,
+  signIn,
   actionSignIn,
 }: PropsFromConnector) => {
   const classes = useStyles();
@@ -49,6 +58,10 @@ const SignIn: React.FC<PropsFromConnector> = ({
   if (isAuthorized) {
     return <Redirect to="/" />;
   }
+
+  const errorMsg = signIn?.errorMsg && (
+    <ErrorMsg variant="h6">{signIn.errorMsg}</ErrorMsg>
+  );
 
   return (
     <View className={classes.root}>
@@ -90,6 +103,7 @@ const SignIn: React.FC<PropsFromConnector> = ({
               error={Boolean(formik.errors.password)}
               helperText={formik.errors.password}
             />
+            {errorMsg}
             <Link
               component={RouterLink}
               to={SIGN_UP}
