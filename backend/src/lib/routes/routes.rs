@@ -5,7 +5,7 @@ use warp::{Filter, Rejection, Reply};
 
 use crate::lib::context::*;
 use crate::lib::database::entities::*;
-use crate::lib::errors::*;
+use crate::lib::errors::errors::*;
 use crate::lib::requests::entities::*;
 use crate::lib::routes::functions::*;
 use crate::query_as;
@@ -41,7 +41,7 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
                 let user = User::new(req.login.clone(), hash);
 
                 match context.rbdb.save_obj(&user, &[]).await {
-                    Err(_err) => Err(DataBaseError::rej()),
+                    Err(_err) => Err(InvalidRegistrationDataError::rej()),
                     Ok(_) => login(&req.login, &req.password, context.rbdb.clone()).await,
                 }
             },

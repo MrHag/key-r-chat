@@ -15,6 +15,7 @@ dependencies = [
  "log",
  "rand 0.8.4",
  "rbatis",
+ "rej_derive",
  "serde",
  "serde_derive",
  "serde_json",
@@ -1904,6 +1905,14 @@ name = "regex-syntax"
 version = "0.6.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
+
+[[package]]
+name = "rej_derive"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "remove_dir_all"

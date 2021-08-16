@@ -7,7 +7,7 @@ use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use crate::lib::{
     context::*,
     database::entities::{Token, User},
-    errors::*,
+    errors::errors::*,
     replyes::entities::LoginReply,
     requests::validation::Validation,
 };
@@ -39,7 +39,7 @@ pub async fn login(
 ) -> Result<impl Reply, Rejection> {
     let user = match rbdb.user_by_login(&login).await {
         Err(_) => {
-            return Err(LoginError::rej());
+            return Err(InvalidLoginDataError::rej());
         }
         Ok(user) => user,
     };
@@ -47,7 +47,7 @@ pub async fn login(
     let phash = hash_string(&password, &SC).unwrap();
 
     if dbg!(phash) != dbg!(user.password_hash.unwrap()) {
-        return Err(LoginError::rej());
+        return Err(InvalidLoginDataError::rej());
     }
 
     let token_str: String = thread_rng()
@@ -116,21 +116,21 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
     } else if let Some(_) = err.find::<CorsForbidden>() {
         code = StatusCode::METHOD_NOT_ALLOWED;
         message = "METHOD_NOT_ALLOWED".to_owned();
-    } else if let Some(_) = err.find::<AuthError>() {
+    } else if let Some(obj) = err.find::<AuthError>() {
         code = StatusCode::UNAUTHORIZED;
-        message = "UNAUTHORIZED".to_owned();
-    } else if let Some(_) = err.find::<LoginError>() {
+        message = obj.rejection.clone();
+    } else if let Some(obj) = err.find::<InvalidLoginDataError>() {
         code = StatusCode::BAD_REQUEST;
-        message = "BAD_REQUEST".to_owned();
-    } else if let Some(_) = err.find::<DataBaseError>() {
+        message = obj.rejection.clone();
+    } else if let Some(obj) = err.find::<InvalidRegistrationDataError>() {
         code = StatusCode::BAD_REQUEST;
-        message = "BAD_REQUEST".to_owned();
-    } else if let Some(_) = err.find::<InternalDataBaseError>() {
+        message = obj.rejection.clone();
+    } else if let Some(obj) = err.find::<InternalDataBaseError>() {
         code = StatusCode::INTERNAL_SERVER_ERROR;
-        message = "INTERNAL_SERVER_ERROR: DATABASE".to_owned();
-    } else if let Some(_) = err.find::<InvalidUserDataFormat>() {
+        message = obj.rejection.clone();
+    } else if let Some(obj) = err.find::<InvalidUserDataFormat>() {
         code = StatusCode::BAD_REQUEST;
-        message = "INVALID_USER_DATA_FORMAT".to_owned();
+        message = obj.rejection.clone();
     } else {
         eprintln!("unhandled rejection: {:?}", err);
         code = StatusCode::INTERNAL_SERVER_ERROR;

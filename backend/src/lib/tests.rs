@@ -13,8 +13,8 @@ async fn start_test() {
     link_db().await;
     println!("0");
     assert!(extract(db_drop_query().await));
-    println!("1");
-    assert!(!extract(error_registration_query().await));
+    // println!("1");
+    // assert!(!extract(error_registration_query().await));
     println!("2");
     assert!(extract(registration_query().await));
     println!("3");
