@@ -23,15 +23,21 @@ export interface IAuthStore {
   };
 }
 
-let DefaultState: IAuthStore = {
+const DefaultState: IAuthStore = {
   isAuthorized: false,
 };
 
-if (localStorage.getItem("auth")) {
-  DefaultState = JSON.parse(localStorage.getItem("auth"));
+let InitialState: IAuthStore = {
+  isAuthorized: false,
+};
+
+const LOCAL_STORAGE_ITEM_NAME = "auth";
+
+if (localStorage.getItem(LOCAL_STORAGE_ITEM_NAME)) {
+  InitialState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_ITEM_NAME));
 }
 
-const reducer = (state = DefaultState, action: ActionType): IAuthStore => {
+const reducer = (state = InitialState, action: ActionType): IAuthStore => {
   switch (action.type) {
     case SIGN_IN_SUCCESS: {
       const a = action as ISignInSuccess;
@@ -43,7 +49,7 @@ const reducer = (state = DefaultState, action: ActionType): IAuthStore => {
         token: a.token,
       };
 
-      localStorage.setItem("auth", JSON.stringify(authState));
+      localStorage.setItem(LOCAL_STORAGE_ITEM_NAME, JSON.stringify(authState));
 
       return authState;
     }
@@ -57,6 +63,7 @@ const reducer = (state = DefaultState, action: ActionType): IAuthStore => {
       };
     }
     case SIGN_OUT: {
+      localStorage.removeItem(LOCAL_STORAGE_ITEM_NAME);
       return DefaultState;
     }
     case SIGN_UP_FAIL: {
