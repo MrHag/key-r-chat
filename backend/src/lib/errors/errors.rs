@@ -1,5 +1,5 @@
-use serde_derive::Serialize;
 use rej_derive::derive_rej;
+use serde_derive::Serialize;
 use warp::{
     reject::{self, Reject},
     Rejection, Reply,

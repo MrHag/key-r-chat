@@ -12,7 +12,7 @@ impl Validation for RegistrationRequest {
     fn validate(&self) -> Result<(), &str> {
         Ok(())
     }
-    
+
     #[cfg(release_assertions)]
     fn validate(&self) -> Result<(), &str> {
         if !(3..=32).contains(&self.login.len()) {
