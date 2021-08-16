@@ -30,6 +30,8 @@ const useStyles = makeStyles(() => ({
 const ErrorMsg = withStyles({
   root: {
     color: "red",
+    marginBottom: "32px",
+    fontSize: "14px",
   },
 })(Typography);
 
@@ -95,7 +97,6 @@ const SignUp: React.FC<PropsFromConnector> = ({
             <Typography variant="h6" className={classes.title}>
               Sign up
             </Typography>
-            {errorMsg}
             <TextField
               autoFocus={true}
               className={classes.textField}
@@ -130,6 +131,7 @@ const SignUp: React.FC<PropsFromConnector> = ({
               error={Boolean(formik.errors.confirmPassword)}
               helperText={formik.errors.confirmPassword}
             />
+            {errorMsg}
             <Link
               component={RouterLink}
               to={SIGN_IN}

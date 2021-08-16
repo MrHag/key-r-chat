@@ -5,6 +5,7 @@ import { IAppStore } from "store";
 
 const mapState = (state: IAppStore) => ({
   isAuthorized: state.auth.isAuthorized,
+  signIn: state.auth.signIn,
 });
 
 const mapDispatch = {

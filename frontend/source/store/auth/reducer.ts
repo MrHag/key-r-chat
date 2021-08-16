@@ -27,16 +27,31 @@ const DefaultState: IAuthStore = {
   isAuthorized: false,
 };
 
-const reducer = (state = DefaultState, action: ActionType): IAuthStore => {
+let InitialState: IAuthStore = {
+  isAuthorized: false,
+};
+
+const LOCAL_STORAGE_ITEM_NAME = "auth";
+
+if (localStorage.getItem(LOCAL_STORAGE_ITEM_NAME)) {
+  InitialState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_ITEM_NAME));
+}
+
+const reducer = (state = InitialState, action: ActionType): IAuthStore => {
   switch (action.type) {
     case SIGN_IN_SUCCESS: {
       const a = action as ISignInSuccess;
-      return {
+
+      const authState = {
         ...state,
         isAuthorized: true,
         login: a.login,
         token: a.token,
       };
+
+      localStorage.setItem(LOCAL_STORAGE_ITEM_NAME, JSON.stringify(authState));
+
+      return authState;
     }
     case SIGN_IN_FAIL: {
       const a = action as ISignInFail;
@@ -48,6 +63,7 @@ const reducer = (state = DefaultState, action: ActionType): IAuthStore => {
       };
     }
     case SIGN_OUT: {
+      localStorage.removeItem(LOCAL_STORAGE_ITEM_NAME);
       return DefaultState;
     }
     case SIGN_UP_FAIL: {

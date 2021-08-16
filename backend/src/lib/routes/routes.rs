@@ -99,7 +99,7 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
 
     #[cfg(debug_assertions)]
     let delete_route = warp::path("drop_db")
-        .and(warp::delete())
+        .and(warp::get())
         .and(with_context)
         .and_then(move |context: Context| async move {
             match context

@@ -8,6 +8,7 @@ module.exports = function () {
     proxy: {
       "/api": "http://localhost:8080",
     },
+    historyApiFallback: true,
     host: "0.0.0.0",
     hot: true,
   };
