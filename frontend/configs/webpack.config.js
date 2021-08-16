@@ -1,15 +1,15 @@
-const path = require('path');
-const webpack = require('webpack');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const EslintWebpackPlugin = require('eslint-webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const path = require("path");
+const webpack = require("webpack");
+const HTMLWebpackPlugin = require("html-webpack-plugin");
+const EslintWebpackPlugin = require("eslint-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
 let isDevMode = false;
-const outputPath = path.resolve(__dirname, '../build');
+const outputPath = path.resolve(__dirname, "../build");
 
 function babelLoaderPlugins() {
   if (isDevMode) {
-    return [require.resolve('react-refresh/babel')];
+    return [require.resolve("react-refresh/babel")];
   }
   return [];
 }
@@ -21,7 +21,7 @@ function generateModule() {
         test: /\.(png|jpe?g|gif)$/i,
         use: [
           {
-            loader: 'file-loader',
+            loader: "file-loader",
           },
         ],
       },
@@ -30,42 +30,35 @@ function generateModule() {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader',
+            loader: "babel-loader",
             options: {
-              plugins: babelLoaderPlugins()
-            }
+              plugins: babelLoaderPlugins(),
+            },
           },
           {
             loader: "ts-loader",
-            options: {
-
-            },
-          }
-        ]
+            options: {},
+          },
+        ],
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [
-          "style-loader",
-          "css-loader",
-          "sass-loader",
-        ],
+        use: ["style-loader", "css-loader", "sass-loader"],
       },
     ],
-  }
-
+  };
 }
 
 function generatePlugins() {
   const plugins = [
     new HTMLWebpackPlugin({
-      template: './public/index.html',
-      favicon: './public/favicon.ico'
+      template: "./public/index.html",
+      favicon: "./public/favicon.ico",
     }),
 
     new EslintWebpackPlugin({
-      overrideConfigFile: path.resolve(__dirname, './.eslintrc'),
-      extensions: ['ts', 'tsx'],
+      overrideConfigFile: path.resolve(__dirname, "./.eslintrc"),
+      extensions: ["ts", "tsx"],
       fix: true,
       emitWarning: true,
       failOnError: !isDevMode,
@@ -81,32 +74,33 @@ function generatePlugins() {
 }
 
 module.exports = function moduleGenerator(mode) {
-  isDevMode = mode === 'development';
+  isDevMode = mode === "development";
 
   return {
-    entry: './source/index.tsx',
+    entry: "./source/index.tsx",
     resolve: {
-      extensions: ['.ts', '.tsx', '.json', '.js'],
+      extensions: [".ts", ".tsx", ".json", ".js"],
       alias: {
-        'components': path.resolve(__dirname, '../source/components'),
-        'views': path.resolve(__dirname, '../source/views'),
-        'constants': path.resolve(__dirname, '../source/constants'),
-        'store': path.resolve(__dirname, '../source/store'),
-        'themes': path.resolve(__dirname, '../source/themes'),
-        'layout': path.resolve(__dirname, '../source/layout'),
-        'common': path.resolve(__dirname, '../source/common')
-      }
+        components: path.resolve(__dirname, "../source/components"),
+        views: path.resolve(__dirname, "../source/views"),
+        constants: path.resolve(__dirname, "../source/constants"),
+        store: path.resolve(__dirname, "../source/store"),
+        themes: path.resolve(__dirname, "../source/themes"),
+        layout: path.resolve(__dirname, "../source/layout"),
+        common: path.resolve(__dirname, "../source/common"),
+      },
     },
 
     mode: mode,
-    devtool: isDevMode ? 'eval-source-map' : false,
+    devtool: isDevMode ? "eval-source-map" : false,
 
     module: generateModule(),
     plugins: generatePlugins(),
 
     output: {
-      filename: 'main.js',
+      filename: "main.js",
       path: outputPath,
+      publicPath: "/",
     },
-  }
-}
+  };
+};
