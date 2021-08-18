@@ -7,7 +7,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate rbatis;
 
-use crate::lib::routes::{functions::handle_rejection, routes::make_route};
+use crate::lib::route::{functions::handle_rejection, routes::make_route};
 mod lib;
 
 #[tokio::main]
@@ -33,6 +33,7 @@ async fn start() {
         .allow_any_origin()
         // .allow_headers(vec!["User-Agent", "Sec-Fetch-Mode", "Referer", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"])
         .allow_methods(vec!["GET", "POST", "DELETE"]);
+        
     let route = warp::any()
         .and(make_route().await)
         .recover(handle_rejection)

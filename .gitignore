@@ -1,4 +1,4 @@
 /backend/target
 /backend/requests.log
 /backend/.vscode
-/backend/src/lib/errors/rej_derive/target
+/backend/src/lib/error/rej_derive/target

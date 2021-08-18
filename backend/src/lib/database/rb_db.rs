@@ -2,7 +2,7 @@ use chrono::Utc;
 use rbatis::crud::*;
 use rbatis::{core::db::DBExecResult, crud::Skip, rbatis::Rbatis, Error};
 
-use super::entities::{Token, User};
+use super::entities::Token;
 pub struct RbDb {
     pub rb: Rbatis,
 }
@@ -28,20 +28,18 @@ impl RbDb {
         }
     }
 
-    pub async fn get_token(&self, token: &String) -> Result<Token, rbatis::Error> {
+    pub async fn get_token(&self, token: &str) -> Result<Token, rbatis::Error> {
         self.rb
-            .fetch_by_column::<Token, String>("token", token)
+            .fetch_by_column::<Token, &str>("token", &token)
             .await
     }
 
-    pub async fn user_by_id(&self, id: &u32) -> Result<User, rbatis::Error> {
-        self.rb.fetch_by_column::<User, u32>("id", id).await
+    pub async fn user_by_id<T: CRUDTable>(&self, id: &u32) -> Result<T, rbatis::Error> {
+        self.rb.fetch_by_column::<T, u32>("id", id).await
     }
 
-    pub async fn user_by_login(&self, login: &String) -> Result<User, rbatis::Error> {
-        self.rb
-            .fetch_by_column::<User, String>("login", login)
-            .await
+    pub async fn user_by_login<T: CRUDTable>(&self, login: &str) -> Result<T, rbatis::Error> {
+        self.rb.fetch_by_column::<T, &str>("login", &login).await
     }
 
     pub async fn delete_expired_tokens_by_userid(&self, id: &u32) -> Result<u64, rbatis::Error> {

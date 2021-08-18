@@ -5,21 +5,21 @@ use warp::{Filter, Rejection, Reply};
 
 use crate::lib::context::*;
 use crate::lib::database::entities::*;
-use crate::lib::errors::errors::*;
+use crate::lib::error::errors::*;
 use crate::lib::requests::entities::*;
-use crate::lib::routes::functions::*;
+use crate::lib::route::functions::*;
 use crate::query_as;
 use rbatis::crud::*;
 
 pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Copy {
     let with_context = warp::any().map(move || CONTEXT.clone());
 
-    let authorize = warp::any()
+    let auth = warp::any()
         .and(warp::header::<String>("authorization"))
         //.and(warp::cookie::<String>("authorization"))
         .and(with_context)
         .and_then(move |token: String, context: Context| async move {
-            authorizefn(&token, context.rbdb.clone()).await
+            authorize(&token, context.rbdb.clone()).await
         });
 
     let login_route = warp::path("login")
@@ -41,15 +41,31 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
                 let user = User::new(req.login.clone(), hash);
 
                 match context.rbdb.save_obj(&user, &[]).await {
-                    Err(_err) => Err(InvalidRegistrationDataError::rej()),
+                    Err(_) => Err(InvalidRegistrationDataError::rej()),
                     Ok(_) => login(&req.login, &req.password, context.rbdb.clone()).await,
                 }
             },
         );
 
-    let handle_ws = move |ws: WebSocket, user: User, usrs: Users| async move {
+    let get_user_route = warp::path!("user" / u32)
+        .and(warp::get())
+        .and(auth)
+        .and(with_context)
+        .and_then(move |id: u32, _user_id: u32, context: Context| async move {
+            get_user(&id, context.rbdb.clone()).await
+        });
+
+    let get_myself_user_route = warp::path("user")
+        .and(warp::get())
+        .and(auth)
+        .and(with_context)
+        .and_then(move |user_id: u32, context: Context| async move {
+            get_user(&user_id, context.rbdb.clone()).await
+        });
+
+    let handle_ws = move |ws: WebSocket, user_id: u32, usrs: Users| async move {
         let (sender, mut receiver) = ws.split();
-        usrs.write().await.insert(user.id.unwrap(), sender);
+        usrs.write().await.insert(user_id, sender);
 
         while let Some(result) = receiver.next().await {
             match result {
@@ -62,36 +78,36 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
                         eprintln!("error receiving ws message");
                         break;
                     }
-                    true => match usrs
-                        .write()
-                        .await
-                        .get_mut(&user.id.unwrap())
-                        .unwrap()
-                        .send(Message::pong([]))
-                        .await
-                    {
-                        Err(_) => {
+                    true => {
+                        if usrs
+                            .write()
+                            .await
+                            .get_mut(&user_id)
+                            .unwrap()
+                            .send(Message::pong([]))
+                            .await
+                            .is_err()
+                        {
                             eprintln!("error send pong");
                             break;
                         }
-                        Ok(_) => (),
-                    },
+                    }
                 },
             };
         }
 
-        usrs.write().await.remove(&user.id.unwrap());
+        usrs.write().await.remove(&user_id);
         println!("User disconnected");
     };
 
     let ws_route = warp::path("ws")
         .and(warp::ws())
-        .and(authorize)
+        .and(auth)
         .and(with_context)
         .and_then(
-            move |ws: warp::ws::Ws, user: User, context: Context| async move {
-                return Ok(ws.on_upgrade(move |g| async move {
-                    handle_ws(g, user, context.users.clone()).await
+            move |ws: warp::ws::Ws, user_id: u32, context: Context| async move {
+                return Ok(ws.on_upgrade(move |ws| async move {
+                    handle_ws(ws, user_id, context.users.clone()).await
                 }));
                 Err(InvalidRequest::rej())
             },
@@ -131,7 +147,10 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
     //             data: "SomeData".to_owned(),
     //         }))
     //     });
-    let native_route = reg_route.or(login_route);
+    let native_route = reg_route
+        .or(login_route)
+        .or(get_user_route)
+        .or(get_myself_user_route);
     #[cfg(debug_assertions)]
     return api_filter.and(native_route.or(delete_route)).or(ws_route);
     #[cfg(not(debug_assertions))]

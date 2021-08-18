@@ -7,6 +7,8 @@ pub struct User {
     pub id: Option<u32>,
     pub login: Option<String>,
     pub password_hash: Option<String>,
+    pub avatar: Option<String>,
+    pub about_me: Option<String>,
 }
 impl User {
     pub fn new(login: String, password_hash: String) -> User {
@@ -14,6 +16,8 @@ impl User {
             id: None,
             login: Some(login),
             password_hash: Some(password_hash),
+            avatar: None,
+            about_me: Some("".to_owned()),
         }
     }
 }

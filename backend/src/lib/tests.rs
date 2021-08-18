@@ -3,21 +3,24 @@ use serde::de::DeserializeOwned;
 use warp::{Rejection, Reply};
 
 use crate::extract;
-use crate::lib::replyes::entities::*;
+use crate::lib::replies::entities::*;
 use crate::link_db;
 
-use super::routes::routes::make_route;
+use super::route::routes::make_route;
 
 #[tokio::test]
 async fn start_test() {
+    fast_log::init_log("requests.log", 1000, log::Level::Info, None, true).unwrap();
     link_db().await;
     println!("0");
     assert!(extract(db_drop_query().await));
-    // println!("1");
-    // assert!(!extract(error_registration_query().await));
+    println!("1");
+    assert!(extract(error_registration_query().await));
     println!("2");
-    assert!(extract(registration_query().await));
+    assert!(!extract(error_registration_query().await));
     println!("3");
+    assert!(extract(registration_query().await));
+    println!("4");
     let reply = extract!(LoginReply, login_query()).await.unwrap();
 
     ws_auth_query(&reply.token).await;
@@ -26,7 +29,7 @@ async fn start_test() {
 async fn db_drop_query() -> Result<impl Reply, Rejection> {
     let route = make_route().await;
 
-    let req = warp::test::request().method("DELETE").path("/api/drop_db");
+    let req = warp::test::request().method("GET").path("/api/drop_db");
 
     req.filter(&route).await
 }
@@ -61,7 +64,7 @@ async fn login_query() -> Result<impl Reply, Rejection> {
     req.filter(&route).await
 }
 
-async fn ws_auth_query(token: &str) -> () {
+async fn ws_auth_query(token: &str) {
     let route = make_route().await;
 
     let req = warp::test::ws().path("/ws").header("authorization", token);

@@ -3,30 +3,6 @@
 version = 3
 
 [[package]]
-name = "LostBackend"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "fast_log",
- "futures",
- "hex",
- "hmac 0.11.0",
- "lazy_static",
- "log",
- "rand 0.8.4",
- "rbatis",
- "rej_derive",
- "serde",
- "serde_derive",
- "serde_json",
- "sha2",
- "tokio",
- "tokio-stream",
- "tokio-test",
- "warp",
-]
-
-[[package]]
 name = "adler"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1176,6 +1152,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83bdfbace3a0e81a4253f73b49e960b053e396a11012cbd49b9b74d6a2b67062"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "key_r_chat"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "fast_log",
+ "futures",
+ "hex",
+ "hmac 0.11.0",
+ "lazy_static",
+ "log",
+ "rand 0.8.4",
+ "rbatis",
+ "rej_derive",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "sha2",
+ "tokio",
+ "tokio-stream",
+ "tokio-test",
+ "warp",
 ]
 
 [[package]]
