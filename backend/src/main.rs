@@ -1,6 +1,5 @@
 use lib::context::CONTEXT;
 use warp::Filter;
-use dotenv;
 
 #[macro_use]
 extern crate lazy_static;
@@ -35,7 +34,7 @@ async fn start() {
         .allow_headers(vec!["authorization"])
         // .allow_headers(vec!["User-Agent", "Sec-Fetch-Mode", "Referer", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"])
         .allow_methods(vec!["GET", "POST", "DELETE"]);
-        
+
     let route = warp::any()
         .and(make_route().await)
         .recover(handle_rejection)

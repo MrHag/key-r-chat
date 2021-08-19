@@ -50,7 +50,12 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
     let user_filter = warp::path("user");
 
     let get_user_route = warp::get()
-        .and(warp::path::end().and(auth).or(warp::path::param::<u32>()).unify())
+        .and(
+            warp::path::end()
+                .and(auth)
+                .or(warp::path::param::<u32>())
+                .unify(),
+        )
         .and(with_context)
         .and_then(move |id: u32, context: Context| async move {
             get_user(&id, context.rbdb.clone()).await
@@ -71,9 +76,12 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
         .and(with_context)
         .and_then(
             move |id: u32, req: ChangeAvatarRequest, context: Context| async move {
-                let mut obj = User::default();
-                obj.id = Some(id);
-                obj.avatar = Some(req.avatar);
+                let mut obj = User {
+                    id: Some(id),
+                    avatar: Some(req.avatar),
+                    ..Default::default()
+                };
+
                 match context.rbdb.update_obj(&mut obj).await {
                     Err(_) => Err(InternalDataBaseError::rej()),
                     Ok(_) => Ok(warp::reply()),
@@ -88,9 +96,12 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
         .and(with_context)
         .and_then(
             move |id: u32, req: ChangeAboutRequest, context: Context| async move {
-                let mut obj = User::default();
-                obj.id = Some(id);
-                obj.about_me = Some(req.about);
+                let mut obj = User {
+                    id: Some(id),
+                    about_me: Some(req.about),
+                    ..Default::default()
+                };
+
                 match context.rbdb.update_obj(&mut obj).await {
                     Err(_) => Err(InternalDataBaseError::rej()),
                     Ok(_) => Ok(warp::reply()),

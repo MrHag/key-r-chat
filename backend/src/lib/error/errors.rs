@@ -1,6 +1,6 @@
 use rej_derive::derive_rej;
 use serde_derive::Serialize;
-use warp::{Rejection, Reply, reject::Reject};
+use warp::{reject::Reject, Rejection, Reply};
 
 #[derive_rej("UNAUTHORIZED", 401)]
 #[derive(Debug)]

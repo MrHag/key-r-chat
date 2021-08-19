@@ -4,7 +4,13 @@ use chrono::{Duration, Utc};
 use hmac::{crypto_mac::InvalidKeyLength, Hmac, Mac, NewMac};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 
-use crate::lib::{context::*, database::entities::Token, error::errors::*, replies::entities::{GetAvatarReply, GetUserReply, LoginReply}, requests::validation::Validation};
+use crate::lib::{
+    context::*,
+    database::entities::Token,
+    error::errors::*,
+    replies::entities::{GetAvatarReply, GetUserReply, LoginReply},
+    requests::validation::Validation,
+};
 use sha2::Sha256;
 use warp::{cors::CorsForbidden, hyper::StatusCode, Rejection, Reply};
 
@@ -105,7 +111,7 @@ pub async fn get_avatar(user_id: &u32, rbdb: ARbDb) -> Result<impl Reply, Reject
         Ok(user) => user,
     };
     Ok(warp::reply::json(&GetAvatarReply {
-        id: user_id.clone(),
+        id: *user_id,
         avatar: other_user.avatar,
     }))
 }
@@ -134,7 +140,6 @@ pub fn try_validate<T: Validation>(to_validate: T) -> Result<T, Rejection> {
 }
 
 pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
-
     let error = if let Some(obj) = err.find::<ErrorModel>() {
         (*obj).clone()
     } else {
@@ -154,10 +159,7 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 "METHOD_NOT_ALLOWED".to_owned(),
             )
         } else if let Some(_err) = err.find::<warp::reject::MissingHeader>() {
-            (
-                StatusCode::UNAUTHORIZED,
-                "UNAUTHORIZED".to_owned(),
-            )
+            (StatusCode::UNAUTHORIZED, "UNAUTHORIZED".to_owned())
         } else if let Some(_err) = err.find::<CorsForbidden>() {
             (
                 StatusCode::METHOD_NOT_ALLOWED,
