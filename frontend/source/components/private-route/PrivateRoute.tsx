@@ -9,7 +9,6 @@ const PrivateRoute: React.FC<RouteProps> = ({
   isAuthorized,
   ...routeProps
 }: IProps) => {
-  console.log("isAuth = ", isAuthorized);
   if (isAuthorized) {
     return <Route {...routeProps} />;
   } else {

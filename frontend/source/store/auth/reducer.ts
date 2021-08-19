@@ -27,14 +27,22 @@ const DefaultState: IAuthStore = {
   isAuthorized: false,
 };
 
-let InitialState: IAuthStore = {
-  isAuthorized: false,
-};
+let InitialState: IAuthStore =
+  !process.env.NODE_ENV || process.env.NODE_ENV === "development"
+    ? {
+        isAuthorized: true,
+        login: "TestUser",
+      }
+    : {
+        isAuthorized: false,
+      };
 
 const LOCAL_STORAGE_ITEM_NAME = "auth";
 
 if (localStorage.getItem(LOCAL_STORAGE_ITEM_NAME)) {
-  InitialState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_ITEM_NAME));
+  const inStorage = JSON.parse(localStorage.getItem(LOCAL_STORAGE_ITEM_NAME));
+  console.log("inStorage = ", inStorage);
+  InitialState = inStorage;
 }
 
 const reducer = (state = InitialState, action: ActionType): IAuthStore => {

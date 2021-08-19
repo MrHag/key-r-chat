@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles, withStyles } from "@material-ui/core";
 import { AppBar, Toolbar, Drawer, ListItem, List } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import { IconButton, MenuItem, Menu } from "@material-ui/core";
+import { IconButton, MenuItem } from "@material-ui/core";
 import { Select } from "@material-ui/core";
 import { useState } from "react";
 import { Link as RouterLink, NavLink } from "react-router-dom";
@@ -20,6 +20,7 @@ const useStyles = makeStyles(() => ({
     textDecoration: "none",
     color: "unset",
     padding: "8px 16px",
+    paddingRight: "32px",
     "&.active": {
       color: "red",
       pointerEvents: "none",
@@ -42,12 +43,11 @@ const StyledListItem = withStyles({
   root: {
     padding: 0,
   },
-})(MenuItem);
+})(ListItem);
 
 const StyledDrawer = withStyles({
   paper: {
     maxWidth: "50vw",
-    paddingRight: "32px",
   },
 })(Drawer);
 
@@ -84,7 +84,7 @@ const Header: React.FC<PropsFromConnector> = ({
     ["Settings", SETTINGS],
     ["Profile", MY_PROFILE],
   ].map((link, index) => (
-    <StyledListItem onClick={handleClose} key={index}>
+    <StyledListItem button onClick={handleClose} key={index}>
       <Link component={NavLink} to={link[1]} className={classes.navLink}>
         {link[0]}
       </Link>
@@ -123,7 +123,7 @@ const Header: React.FC<PropsFromConnector> = ({
           <List>
             {listLinks}
 
-            <StyledListItem className={classes.logoutLink}>
+            <StyledListItem button className={classes.logoutLink}>
               <Link onClick={onLogoutClick} className={classes.navLink}>
                 Logout
               </Link>
