@@ -1,0 +1,575 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0",
+    "title": "key-r-chat API",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8080"
+    }
+  ],
+  "tags": [
+    {
+      "name": "authorization",
+      "description": "Operations for authentication and authorazation"
+    },
+    {
+      "name": "user",
+      "description": "Operations about user"
+    },
+    {
+      "name": "debug",
+      "description": "Operations for debugging"
+    }
+  ],
+  "paths": {
+    "/api/login": {
+      "post": {
+        "tags": [
+          "authorization"
+        ],
+        "summary": "Login",
+        "operationId": "Login",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "query",
+            "description": "User login",
+            "example": "Petro",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "User password",
+            "example": "petrol",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/registration": {
+      "post": {
+        "tags": [
+          "authorization"
+        ],
+        "summary": "Registration",
+        "operationId": "Registration",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "query",
+            "description": "User login",
+            "example": "Petro",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "User password",
+            "example": "petrol",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "UserGet",
+        "operationId": "UserGet",
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequestError"
+                    },
+                    {
+                      "properties": {
+                        "message": {
+                          "default": "USER_NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userId}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "UserGetById",
+        "operationId": "UserGetById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequestError"
+                    },
+                    {
+                      "properties": {
+                        "message": {
+                          "default": "USER_NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/avatar": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "UserAvatarGet",
+        "operationId": "UserAvatarGet",
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Avatar"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequestError"
+                    },
+                    {
+                      "properties": {
+                        "message": {
+                          "default": "USER_NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "UserAvatarPost",
+        "operationId": "UserAvatarPost",
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "avatar",
+            "in": "query",
+            "description": "Base64 encoded image",
+            "example": "iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAIAAABLMMCEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAySURBVBhXbYpJDgAgDAL5/6dRlsZonAPpUEASUIbcO8tHNDNtIg/e39t6r0GNF+chIRcL7lCwHU8RzwAAAABJRU5ErkJggg==",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "base64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/avatar/{userId}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "UserAvatarGetById",
+        "operationId": "UserAvatarGetById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Avatar"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequestError"
+                    },
+                    {
+                      "properties": {
+                        "message": {
+                          "default": "USER_NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/about": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "UserAboutPost",
+        "operationId": "UserAboutPost",
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "about",
+            "in": "query",
+            "description": "Information about user",
+            "example": "I'm lucky man",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "string",
+              "maxLength": 255
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid data in query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drop_db": {
+      "get": {
+        "tags": [
+          "debug"
+        ],
+        "summary": "Drop DB",
+        "description": "This operation will clear db",
+        "operationId": "drop_db",
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "UInt64"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Token": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "default": "token"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "id",
+          "login",
+          "avatar_id",
+          "about_me"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "default": "135"
+          },
+          "login": {
+            "type": "string",
+            "default": "Petro"
+          },
+          "avatar_id": {
+            "type": "integer",
+            "default": "135"
+          },
+          "about_me": {
+            "type": "string",
+            "default": "I'm lucky man"
+          }
+        }
+      },
+      "Avatar": {
+        "type": "object",
+        "required": [
+          "id",
+          "avatar"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "default": "135"
+          },
+          "avatar_id": {
+            "type": "string",
+            "default": "135",
+            "format": "base64"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "message",
+          "code"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 600
+          }
+        }
+      },
+      "BadRequestError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "properties": {
+              "message": {
+                "default": "BAD_REQUEST",
+                "enum": [
+                  "FIELD_ERROR: {data}",
+                  "BAD_REQUEST",
+                  "USER_NOT_FOUND",
+                  "INVALID_LOGIN_DATA",
+                  "INVALID_REGISTRATION_DATA",
+                  "INVALID_USERDATA_FORMAT"
+                ]
+              },
+              "code": {
+                "default": 400
+              }
+            }
+          }
+        ]
+      },
+      "InternalServerError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "properties": {
+              "message": {
+                "default": "INTERNAL_SERVER_ERROR",
+                "enum": [
+                  "INTERNAL_SERVER_ERROR"
+                ]
+              },
+              "code": {
+                "default": 500
+              }
+            }
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header"
+      }
+    }
+  }
+}

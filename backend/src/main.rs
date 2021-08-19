@@ -1,5 +1,6 @@
 use lib::context::CONTEXT;
 use warp::Filter;
+use dotenv;
 
 #[macro_use]
 extern crate lazy_static;
@@ -26,11 +27,12 @@ async fn link_db() {
 
 async fn start() {
     fast_log::init_log("requests.log", 1000, log::Level::Info, None, true).unwrap();
-
+    dotenv::dotenv().expect(".env file not found");
     link_db().await;
 
     let cors = warp::cors()
         .allow_any_origin()
+        .allow_headers(vec!["authorization"])
         // .allow_headers(vec!["User-Agent", "Sec-Fetch-Mode", "Referer", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"])
         .allow_methods(vec!["GET", "POST", "DELETE"]);
         

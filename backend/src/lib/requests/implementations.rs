@@ -26,3 +26,15 @@ impl Validation for RegistrationRequest {
         Ok(())
     }
 }
+
+impl Validation for ChangeAvatarRequest {
+    fn validate(&self) -> Result<(), &str> {
+        todo!()
+    }
+}
+
+impl Validation for ChangeAboutRequest {
+    fn validate(&self) -> Result<(), &str> {
+        todo!()
+    }
+}

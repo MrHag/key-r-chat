@@ -22,7 +22,7 @@ pub struct UserNotFoundError {}
 #[derive(Debug)]
 pub struct InternalDataBaseError {}
 
-#[derive_rej("ERR", 400)]
+#[derive_rej("INVALID_REQUEST", 400)]
 #[derive(Debug)]
 pub struct InvalidRequest {}
 

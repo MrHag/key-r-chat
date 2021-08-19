@@ -1,3 +1,4 @@
+#![feature(proc_macro_span)]
 extern crate proc_macro;
 use std::str::FromStr;
 
@@ -13,7 +14,7 @@ pub fn derive_rej(args: TokenStream, input: TokenStream) -> TokenStream {
     let reject = match iter.next() {
         None => panic!("Error: expected text argument with error description."),
         Some(token) => match token {
-            proc_macro::TokenTree::Literal(literal) => literal.to_string(),
+            proc_macro::TokenTree::Literal(literal) => {literal.to_string().replace("\"", "")},
             _ => panic!("Error: expected literal argument."),
         },
     };

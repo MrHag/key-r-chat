@@ -38,8 +38,8 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
             move |req: RegistrationRequest, context: Context| async move {
                 let hash = hash_string(&req.password, &SC).unwrap();
 
-                let user = User::new(req.login.clone(), hash);
-
+                let mut user = User::new(req.login.clone(), hash);
+                user.avatar = Some(AVATAR.to_string());
                 match context.rbdb.save_obj(&user, &[]).await {
                     Err(_) => Err(InvalidRegistrationDataError::rej()),
                     Ok(_) => login(&req.login, &req.password, context.rbdb.clone()).await,
@@ -47,21 +47,56 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
             },
         );
 
-    let get_user_route = warp::path!("user" / u32)
-        .and(warp::get())
-        .and(auth)
+    let user_filter = warp::path("user");
+
+    let get_user_route = warp::get()
+        .and(warp::path::end().and(auth).or(warp::path::param::<u32>()).unify())
         .and(with_context)
-        .and_then(move |id: u32, _user_id: u32, context: Context| async move {
+        .and_then(move |id: u32, context: Context| async move {
             get_user(&id, context.rbdb.clone()).await
         });
 
-    let get_myself_user_route = warp::path("user")
+    let get_user_avatar_route = warp::path("avatar")
         .and(warp::get())
-        .and(auth)
+        .and(warp::path::param::<u32>().or(auth).unify())
         .and(with_context)
-        .and_then(move |user_id: u32, context: Context| async move {
-            get_user(&user_id, context.rbdb.clone()).await
+        .and_then(move |id: u32, context: Context| async move {
+            get_avatar(&id, context.rbdb.clone()).await
         });
+
+    let change_user_avatar_route = warp::path("avatar")
+        .and(warp::post())
+        .and(auth)
+        .and(query_as!(ChangeAvatarRequest))
+        .and(with_context)
+        .and_then(
+            move |id: u32, req: ChangeAvatarRequest, context: Context| async move {
+                let mut obj = User::default();
+                obj.id = Some(id);
+                obj.avatar = Some(req.avatar);
+                match context.rbdb.update_obj(&mut obj).await {
+                    Err(_) => Err(InternalDataBaseError::rej()),
+                    Ok(_) => Ok(warp::reply()),
+                }
+            },
+        );
+
+    let change_user_about_route = warp::path("about")
+        .and(warp::post())
+        .and(auth)
+        .and(query_as!(ChangeAboutRequest))
+        .and(with_context)
+        .and_then(
+            move |id: u32, req: ChangeAboutRequest, context: Context| async move {
+                let mut obj = User::default();
+                obj.id = Some(id);
+                obj.about_me = Some(req.about);
+                match context.rbdb.update_obj(&mut obj).await {
+                    Err(_) => Err(InternalDataBaseError::rej()),
+                    Ok(_) => Ok(warp::reply()),
+                }
+            },
+        );
 
     let handle_ws = move |ws: WebSocket, user_id: u32, usrs: Users| async move {
         let (sender, mut receiver) = ws.split();
@@ -147,12 +182,22 @@ pub async fn make_route() -> impl Filter<Extract = (impl Reply,), Error = Reject
     //             data: "SomeData".to_owned(),
     //         }))
     //     });
-    let native_route = reg_route
-        .or(login_route)
-        .or(get_user_route)
-        .or(get_myself_user_route);
+
+    //TODO: Simplify user_routes: (A && B) || A || C
+    let user_routes = user_filter.and(
+        get_user_route
+            .or(get_user_avatar_route)
+            .or(change_user_avatar_route)
+            .or(change_user_about_route),
+    );
+
+    let auth_route = reg_route.or(login_route);
+    let debug_route = delete_route;
+
+    let native_route = auth_route.or(user_routes);
+
     #[cfg(debug_assertions)]
-    return api_filter.and(native_route.or(delete_route)).or(ws_route);
+    return api_filter.and(native_route.or(debug_route)).or(ws_route);
     #[cfg(not(debug_assertions))]
     api_filter.and(native_route).or(ws_route)
 }

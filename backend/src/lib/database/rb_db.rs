@@ -28,6 +28,23 @@ impl RbDb {
         }
     }
 
+    pub async fn update_obj<T>(&self, obj: &mut T) -> Result<u64, String>
+    where
+        T: CRUDTable,
+    {
+        let db_result = self.rb.update_by_column("id", obj).await;
+
+        match db_result {
+            Err(err) => Err(match err {
+                Error::E(err) => err,
+                Error::Deserialize(err) => err,
+                Error::Database(err) => err,
+                _ => "Uknown error".to_owned(),
+            }),
+            Ok(res) => Ok(res),
+        }
+    }
+
     pub async fn get_token(&self, token: &str) -> Result<Token, rbatis::Error> {
         self.rb
             .fetch_by_column::<Token, &str>("token", &token)

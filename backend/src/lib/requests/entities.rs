@@ -14,6 +14,10 @@ pub struct LoginRequest {
 
 #[derive(Deserialize)]
 pub struct ChangeAvatarRequest {
-    pub login: String,
-    pub password: String,
+    pub avatar: String,
+}
+
+#[derive(Deserialize)]
+pub struct ChangeAboutRequest {
+    pub about: String,
 }

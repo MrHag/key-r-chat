@@ -12,3 +12,9 @@ pub struct GetUserReply {
     pub avatar_id: u32,
     pub about_me: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct GetAvatarReply {
+    pub id: u32,
+    pub avatar: String,
+}

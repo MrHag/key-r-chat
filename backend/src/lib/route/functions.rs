@@ -4,13 +4,7 @@ use chrono::{Duration, Utc};
 use hmac::{crypto_mac::InvalidKeyLength, Hmac, Mac, NewMac};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 
-use crate::lib::{
-    context::*,
-    database::entities::Token,
-    error::errors::*,
-    replies::entities::{GetUserReply, LoginReply},
-    requests::validation::Validation,
-};
+use crate::lib::{context::*, database::entities::Token, error::errors::*, replies::entities::{GetAvatarReply, GetUserReply, LoginReply}, requests::validation::Validation};
 use sha2::Sha256;
 use warp::{cors::CorsForbidden, hyper::StatusCode, Rejection, Reply};
 
@@ -101,6 +95,21 @@ pub async fn get_user(user_id: &u32, rbdb: ARbDb) -> Result<impl Reply, Rejectio
     }))
 }
 
+pub async fn get_avatar(user_id: &u32, rbdb: ARbDb) -> Result<impl Reply, Rejection> {
+    #[crud_table(table_name:users)]
+    struct QueryUser {
+        pub avatar: String,
+    }
+    let other_user = match rbdb.user_by_id::<QueryUser>(user_id).await {
+        Err(_) => return Err(UserNotFoundError::rej()),
+        Ok(user) => user,
+    };
+    Ok(warp::reply::json(&GetAvatarReply {
+        id: user_id.clone(),
+        avatar: other_user.avatar,
+    }))
+}
+
 pub fn hash_string(str: &str, secret_key: &[u8]) -> Result<String, InvalidKeyLength> {
     let mac = Hmac::<Sha256>::new_from_slice(secret_key);
     match mac {
@@ -143,6 +152,11 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
             (
                 StatusCode::METHOD_NOT_ALLOWED,
                 "METHOD_NOT_ALLOWED".to_owned(),
+            )
+        } else if let Some(_err) = err.find::<warp::reject::MissingHeader>() {
+            (
+                StatusCode::UNAUTHORIZED,
+                "UNAUTHORIZED".to_owned(),
             )
         } else if let Some(_err) = err.find::<CorsForbidden>() {
             (

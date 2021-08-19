@@ -1,6 +1,6 @@
 use futures::{Future, TryStreamExt};
 use serde::de::DeserializeOwned;
-use warp::{Rejection, Reply};
+use warp::{Filter, Rejection, Reply};
 
 use crate::extract;
 use crate::lib::replies::entities::*;
@@ -8,22 +8,37 @@ use crate::link_db;
 
 use super::route::routes::make_route;
 
+struct TestPrinter(u32);
+impl TestPrinter {
+    fn next(&mut self) {
+        println!("test №{}", self.0);
+        self.0 += 1;
+    }
+}
+
 #[tokio::test]
 async fn start_test() {
     fast_log::init_log("requests.log", 1000, log::Level::Info, None, true).unwrap();
     link_db().await;
-    println!("0");
-    assert!(extract(db_drop_query().await));
-    println!("1");
-    assert!(extract(error_registration_query().await));
-    println!("2");
-    assert!(!extract(error_registration_query().await));
-    println!("3");
-    assert!(extract(registration_query().await));
-    println!("4");
-    let reply = extract!(LoginReply, login_query()).await.unwrap();
 
-    ws_auth_query(&reply.token).await;
+    let mut p = TestPrinter(0);
+
+    p.next();
+    assert!(extract(db_drop_query().await));
+    p.next();
+    assert!(extract(error_registration_query().await));
+    p.next();
+    assert!(!extract(error_registration_query().await));
+    p.next();
+    assert!(extract(registration_query().await));
+    p.next();
+    let token = extract!(LoginReply, login_query()).await.unwrap().token;
+    p.next();
+    assert!(extract(get_user_query(&token).await));
+    p.next();
+    assert!(extract(get_user_by_id_query(1).await));
+
+    ws_auth_query(&token).await;
 }
 
 async fn db_drop_query() -> Result<impl Reply, Rejection> {
@@ -64,6 +79,26 @@ async fn login_query() -> Result<impl Reply, Rejection> {
     req.filter(&route).await
 }
 
+async fn get_user_query(token: &str) -> Result<impl Reply, Rejection> {
+    let route = make_route().await;
+
+    let req = warp::test::request()
+        .method("GET")
+        .header("authorization", token)
+        .path("/api/user");
+
+    req.filter(&route).await
+}
+
+async fn get_user_by_id_query(id: u32) -> Result<impl Reply, Rejection> {
+    let route = make_route().await;
+
+    let req = warp::test::request()
+        .method("GET")
+        .path(&format!("/api/user/{}", id));
+
+    req.filter(&route).await
+}
 async fn ws_auth_query(token: &str) {
     let route = make_route().await;
 
